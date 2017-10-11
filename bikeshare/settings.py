@@ -37,14 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'admin_reorder',
+    'shib_auth',
+    'backend'
 ]
 
 MIDDLEWARE = [
+    'admin_reorder.middleware.ModelAdminReorder',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'shib_auth.middleware.ShibbolethRemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -69,6 +74,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bikeshare.wsgi.application'
 
+ADMIN_REORDER = (
+    # Cross-linked models
+    {'app': 'auth', 'models': ('auth.Group', 'shib_auth.ShibUser')},
+)
+
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -81,24 +91,15 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
+AUTHENTICATION_BACKENDS = (
+    'shib_auth.backends.ShibbolethRemoteUserBackend',
+)
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+SHIBBOLETH_ATTRIBUTE_MAP = {
+    # "uid": (True, "username"),
+}
 
+AUTH_USER_MODEL = 'shib_auth.ShibUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -107,9 +108,9 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = False
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
