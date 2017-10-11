@@ -1275,3 +1275,5 @@ updated static and media files in django section">from Cadmus/master</a>
   </body>
 </html>
 
+db.sqlite3
+__pycache__/
