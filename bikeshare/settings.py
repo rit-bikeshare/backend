@@ -25,7 +25,7 @@ SECRET_KEY = '*$#$!#g=14t2hxjgw&itpm*^pqq=j&)u8zrq8cph(ev8v(w9ne'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -75,6 +75,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'bikeshare.wsgi.application'
 
 ADMIN_REORDER = (
+    'backend',
     # Cross-linked models
     {'app': 'auth', 'models': ('auth.Group', 'shib_auth.ShibUser')},
 )
