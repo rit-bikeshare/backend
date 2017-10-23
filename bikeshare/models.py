@@ -18,25 +18,17 @@ class BikeRack(models.Model):
 class Bike(models.Model):
 	id = models.SlugField(primary_key=True, help_text='ID for the bike. This should match the QR code on the bike')
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
-	bikerack = models.ForeignKey(BikeRack, help_text='The most recent location of the bike.')
+	lon = models.DecimalField(max_digits=9, decimal_places=6, help_text='Longitude of the bike\'s coordinates')
+	lat = models.DecimalField(max_digits=9, decimal_places=6, help_text='Latitude of the bike\'s coordinates')
+	current_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The current rental for this bike', related_name='current_rental')
 
 	class Meta:
 		permissions = (
 			('rent_bike', 'Can rent a bike'),
 		)
 
-	def get_current_rental(self):
-		# a bike is rented if the most recent rental started but hasn't completed
-		try:
-			r = Rental.objects.filter(bike=self).latest('rented_at').first()
-			if not r or r.returned_at == None: return None
-			return r
-		except Exception as e:
-			return None
-	#enddef
-
 	def is_rented(self):
-		return self.get_current_rental() is not None
+		return self.current_rental is not None
 	#enddef
 	is_rented.boolean = True
 
@@ -46,8 +38,8 @@ class Bike(models.Model):
 
 
 class Rental(models.Model):
-	renter = models.ForeignKey(settings.AUTH_USER_MODEL, help_text='User who rented the bike')
-	bike = models.ForeignKey(Bike, help_text='The bike they rented')
+	renter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, help_text='User who rented the bike')
+	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was rented rented')
 	rented_at = models.DateTimeField(help_text='When the rental began')
 	should_return_at = models.DateTimeField(help_text='When the renter was supposed to return the bike by')
 	returned_at = models.DateTimeField(null=True, blank=True, help_text='When the bike was actually returned')
@@ -77,7 +69,7 @@ class Rental(models.Model):
 		return str(self.id)
 
 class MaintenanceReport(models.Model):
-	bike = models.ForeignKey(Bike, help_text='Bike that is the subject of this report')
+	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='Bike that is the subject of this report')
 	created_at = models.DateTimeField(auto_now_add=True, help_text='When this report was entered')
 	comments = models.TextField(help_text='Any additional comments about this bike')
 
@@ -94,12 +86,12 @@ class DamageType(models.Model):
 
 
 class DamageReport(models.Model):
-	reporter = models.ForeignKey(settings.AUTH_USER_MODEL, help_text='The user who reported the damage')
-	bike = models.ForeignKey(Bike, help_text='The bike that was damaged')
-	damage_type = models.ForeignKey(DamageType, help_text='The type of damage done')
+	reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, help_text='The user who reported the damage')
+	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was damaged')
+	damage_type = models.ForeignKey(DamageType, on_delete=models.PROTECT, help_text='The type of damage done')
 	reported_at = models.DateTimeField(auto_now_add=True, help_text='When the damage was reported')
 	comments = models.TextField(help_text='Additional comments about the damage')
-	resolved_by = models.ForeignKey(MaintenanceReport, blank=True, null=True, help_text='The maintenance report that resolved this damage')
+	resolved_by = models.ForeignKey(MaintenanceReport, on_delete=models.CASCADE, blank=True, null=True, help_text='The maintenance report that resolved this damage')
 
 	def __str__(self):
 		return '{} - {}'.format(self.bike.id, self.damage_type.name)

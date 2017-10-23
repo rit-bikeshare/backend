@@ -54,14 +54,14 @@ class RentalAdmin(admin.ModelAdmin):
 @admin.register(models.Bike)
 class BikeAdmin(admin.ModelAdmin):
 	# Controls the summary view
-	list_display = ('id', 'bikerack', 'is_rented', 'visible')
+	list_display = ('id', 'is_rented', 'visible')
 	search_fields = ('id',)
 	ordering = ('id',)
 
 	# Controls the add/change pages
 	fieldsets = (
 		('General', {
-			'fields': ('visible', 'bikerack') 
+			'fields': ('visible', 'lat', 'lon') 
 		}),
 		('Advanced', {
 			'fields': ('id',)
