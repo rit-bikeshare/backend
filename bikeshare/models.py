@@ -20,6 +20,11 @@ class Bike(models.Model):
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
 	bikerack = models.ForeignKey(BikeRack, help_text='The most recent location of the bike.')
 
+	class Meta:
+		permissions = (
+			('rent_bike', 'Can rent a bike'),
+		)
+
 	def get_current_rental(self):
 		# a bike is rented if the most recent rental started but hasn't completed
 		try:
