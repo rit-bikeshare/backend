@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'admin_reorder',
     'shib_auth',
-    'backend'
+    'bikeshare'
 ]
 
 MIDDLEWARE = [
@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'bikeshare.urls'
+ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
@@ -72,10 +72,10 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'bikeshare.wsgi.application'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 ADMIN_REORDER = (
-    'backend',
+    'bikeshare',
     # Cross-linked models
     {'app': 'auth', 'models': ('auth.Group', 'shib_auth.ShibUser')},
 )
