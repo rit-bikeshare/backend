@@ -1,9 +1,10 @@
+from django.conf import settings
 from django.contrib.auth.middleware import RemoteUserMiddleware
 from django.contrib.auth.models import Group
 from django.contrib import auth
 from django.core.exceptions import ImproperlyConfigured
 
-from shib_auth.app_settings import SHIB_ATTRIBUTE_MAP, LOGOUT_SESSION_KEY
+from .app_settings import SHIB_FORCE_REAUTH_SESSION_KEY, SHIB_ATTRIBUTE_MAP, SHIB_MOCK, SHIB_MOCK_ATTRIBUTES, SHIB_USERNAME_ATTRIB_NAME
 
 
 class ShibbolethRemoteUserMiddleware(RemoteUserMiddleware):
@@ -23,22 +24,17 @@ class ShibbolethRemoteUserMiddleware(RemoteUserMiddleware):
 
         # To support logout.  If this variable is True, do not
         # authenticate user and return now.
-        if request.session.get(LOGOUT_SESSION_KEY):
+        if request.session.get(SHIB_FORCE_REAUTH_SESSION_KEY):
             return
         else:
             # Delete the shib reauth session key if present.
-            request.session.pop(LOGOUT_SESSION_KEY, None)
+            request.session.pop(SHIB_FORCE_REAUTH_SESSION_KEY, None)
 
-        # Locate the remote user header.
-        try:
-            username = 'test' # request.META[self.header]
-        except KeyError:
-            # If specified header doesn't exist then return (leaving
-            # request.user set to AnonymousUser by the
-            # AuthenticationMiddleware).
-            return
-        #If we got an empty value for request.META[self.header], treat it like
-        #   self.header wasn't in self.META at all - it's still an anonymous user.
+        if settings.DEBUG and SHIB_MOCK:
+            request.META.update(SHIB_MOCK_ATTRIBUTES)
+
+        username = request.META.get(SHIB_USERNAME_ATTRIB_NAME, None)
+        # If we got None or an empty value, this is still an anonymous user.
         if not username:
             return
         # If the user is already authenticated and that user is the user we are
@@ -53,8 +49,7 @@ class ShibbolethRemoteUserMiddleware(RemoteUserMiddleware):
         # Add parsed attributes to the session.
         request.session['shib'] = shib_meta
         if error:
-            raise ShibbolethValidationError("All required Shibboleth elements"
-                                            " not found.  %s" % shib_meta)
+            raise ShibbolethValidationError("All required Shibboleth elements not found.  %s" % shib_meta)
 
         # We are seeing this user for the first time in this session, attempt
         # to authenticate the user.
