@@ -96,8 +96,18 @@ AUTHENTICATION_BACKENDS = (
     'shib_auth.backends.ShibbolethRemoteUserBackend',
 )
 
-SHIBBOLETH_ATTRIBUTE_MAP = {
-    # "uid": (True, "username"),
+SHIB_USERNAME_ATTRIB_NAME = 'uid'
+SHIB_ATTRIBUTE_MAP = {
+    "uid": (True, "username"),
+    "sn": (False, "last_name"),
+    "first_name": (False, "first_name")
+}
+
+SHIB_MOCK = True
+SHIB_MOCK_ATTRIBUTES = {
+    'uid': 'test',
+    'sn' : 'McTestface',
+    'first_name': 'Testy'
 }
 
 AUTH_USER_MODEL = 'shib_auth.ShibUser'
