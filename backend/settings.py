@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'admin_reorder',
+    'rest_framework',
     'shib_auth',
     'bikeshare'
 ]
@@ -91,6 +92,9 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('bikeshare.rest_auth.NoCsrfSessionAuthentication',)
+}
 
 AUTHENTICATION_BACKENDS = (
     'shib_auth.backends.ShibbolethRemoteUserBackend',
