@@ -64,7 +64,7 @@ class BikeAdmin(admin.ModelAdmin):
 			'fields': ('visible', 'lat', 'lon') 
 		}),
 		('Advanced', {
-			'fields': ('id',)
+			'fields': ('id', 'current_rental')
 		})
 	)
 
