@@ -28,8 +28,10 @@ def checkout(request):
 		bike = get_object_or_404(models.Bike.objects.select_for_update(), id=serializer.validated_data['bike'])
 
 		# Can't rent a bike twice
-		if bike.current_rental != None:
-			raise exceptions.AlreadyRentedException()
+		if bike.current_rental != None: raise exceptions.AlreadyRentedException()
+
+		# Check for unresolved damage
+		if models.DamageReport.objects.filter(bike=bike, resolved_by=None).exists(): raise exceptions.BikeDamagedException()
 
 		# Make a new rental. For now the duration is hardcoded
 		rental_start = models.Rental.get_rental_start()

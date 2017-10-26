@@ -6,6 +6,11 @@ class AlreadyRentedException(APIException):
 	default_detail = 'This bike is already rented!'
 	default_code = 'already_rented'
 
+class BikeDamagedException(APIException):
+	status_code = status.HTTP_409_CONFLICT
+	default_detail = "This bike can't be rented because it's damaged."
+	default_code = 'bike_damaged'
+
 class NotRentedException(APIException):
 	status_code = status.HTTP_409_CONFLICT
 	default_detail = 'This bike is not rented!'

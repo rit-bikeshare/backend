@@ -81,13 +81,14 @@ class MaintenanceReportForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		if self.instance:
-			self.fields['damages'].queryset = models.DamageReport.objects.filter(resolved_by=None, bike=self.instance.bike)
+			self.fields['damages'].queryset = models.DamageReport.objects.filter(resolved_by=None)
 
 	def save(self, *args, **kwargs):
 		# FIXME: 'commit' argument is not handled
 		# TODO: Wrap reassignments into transaction
 		# NOTE: Previously assigned Foos are silently reset
 		instance = super().save(commit=False)
+		instance.save()
 		self.cleaned_data['damages'].update(resolved_by=instance)
 		return instance
 
