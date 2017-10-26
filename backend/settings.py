@@ -104,7 +104,7 @@ SHIB_USERNAME_ATTRIB_NAME = 'uid'
 SHIB_ATTRIBUTE_MAP = {
     "uid": (True, "username"),
     "sn": (False, "last_name"),
-    "first_name": (False, "first_name")
+    "givenName": (False, "first_name")
 }
 
 SHIB_MOCK = True
