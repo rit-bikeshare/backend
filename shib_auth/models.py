@@ -73,18 +73,18 @@ class AbstractShibUser(PermissionsMixin):
 		abstract = True
 #endclass
 
-class ShibUser(AbstractShibUser):
-	objects = ShibUserManager()
+# class ShibUser(AbstractShibUser):
+# 	objects = ShibUserManager()
 
-	def get_full_name(self):
-		return self.username
-	#enddef
+# 	def get_full_name(self):
+# 		return self.username
+# 	#enddef
 
-	def get_short_name(self):
-		return self.username
-	#endif
+# 	def get_short_name(self):
+# 		return self.username
+# 	#endif
 
-	def __str__(self):
-		return self.get_full_name()
-	#enddef
-#enddef
+# 	def __str__(self):
+# 		return self.get_full_name()
+# 	#enddef
+# #enddef

@@ -1,0 +1,5 @@
+from shib_auth.backends import ShibbolethRemoteUserBackend
+from extended_auth.backends import ExtendedModelBackend
+
+class BikeshareRemoteUserBackend(ShibbolethRemoteUserBackend, ExtendedModelBackend):
+	pass

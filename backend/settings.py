@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'admin_reorder',
     'rest_framework',
     'shib_auth',
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 ADMIN_REORDER = (
     'bikeshare',
     # Cross-linked models
-    {'app': 'auth', 'models': ('auth.Group', 'shib_auth.ShibUser')},
+    {'app': 'auth', 'models': ('auth.Group', 'bikeshare.BikeshareUser')},
 )
 
 
@@ -97,7 +98,7 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'shib_auth.backends.ShibbolethRemoteUserBackend',
+    'bikeshare.backends.BikeshareRemoteUserBackend',
 )
 
 SHIB_USERNAME_ATTRIB_NAME = 'uid'
@@ -114,7 +115,7 @@ SHIB_MOCK_ATTRIBUTES = {
     'first_name': 'Testy'
 }
 
-AUTH_USER_MODEL = 'shib_auth.ShibUser'
+AUTH_USER_MODEL = 'bikeshare.BikeshareUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

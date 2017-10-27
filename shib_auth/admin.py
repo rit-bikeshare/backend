@@ -3,11 +3,7 @@ from django.contrib import admin, messages
 
 from django.utils.translation import gettext, gettext_lazy as _
 
-from .models import ShibUser
-
-
-@admin.register(ShibUser)
-class UserAdmin(admin.ModelAdmin):
+class ShibUserAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('username',)}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
