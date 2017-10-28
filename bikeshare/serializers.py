@@ -11,6 +11,16 @@ class RentalSerializer(serializers.ModelSerializer):
 		model = models.Rental
 		fields = '__all__'
 
+class DamageReportSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.DamageReport
+		fields = '__all__'
+
+class DamageTypeSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.DamageType
+		fields = '__all__'
+
 class CheckoutRequestSerializer(serializers.Serializer):
 	bike = serializers.SlugField()
 
@@ -33,3 +43,8 @@ class CheckInRequestSerializer(serializers.Serializer):
 
 		# All good
 		return data
+
+class ReportDamageRequestSerializer(serializers.Serializer):
+	bike = serializers.SlugField()
+	damage_type = serializers.SlugField()
+	comments = serializers.CharField()
