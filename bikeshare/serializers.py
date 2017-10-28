@@ -48,3 +48,4 @@ class ReportDamageRequestSerializer(serializers.Serializer):
 	bike = serializers.SlugField()
 	damage_type = serializers.SlugField()
 	comments = serializers.CharField()
+	critical = serializers.BooleanField()
