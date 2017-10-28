@@ -49,6 +49,7 @@ class Bike(models.Model):
 	class Meta:
 		permissions = (
 			('rent_bike', 'Can rent a bike'),
+			('rent_hidden_bike', "Can rent a bike that's not visible"),
 		)
 
 	def is_rented(self):
