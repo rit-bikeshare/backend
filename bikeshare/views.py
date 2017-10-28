@@ -28,7 +28,9 @@ def checkout(request):
 		bike = get_object_or_404(models.Bike.objects.select_for_update(), id=serializer.validated_data['bike'])
 
 		# Can't rent a bike twice
-		if bike.current_rental != None: raise exceptions.AlreadyRentedException()
+		if bike.current_rental is not None: raise exceptions.AlreadyRentedException()
+
+		if not bike.visible and not request.user.has_perm('bikeshare.rent_hidden_bike'): raise exceptions.BikeNotRentableException()
 
 		# Check for unresolved damage
 		if models.DamageReport.objects.filter(bike=bike, resolved_by=None).exists(): raise exceptions.BikeDamagedException()
@@ -68,7 +70,7 @@ def check_in(request):
 		bike = get_object_or_404(models.Bike.objects.select_for_update(), id=serializer.validated_data['bike'])
 		rental = bike.current_rental
 
-		if rental == None: raise exceptions.NotRentedException()
+		if rental is None: raise exceptions.NotRentedException()
 		if rental.renter != request.user: raise exceptions.NotYourRentalException()
 
 		# Set the rental's actual end to now
