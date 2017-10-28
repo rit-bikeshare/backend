@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import permissions, status
+from rest_framework import permissions, status, generics
 from rest_framework.response import Response
 
 from . import models, serializers, exceptions
@@ -13,6 +13,9 @@ from . import models, serializers, exceptions
 def permission_required(perm):
 	return __permission_required(perm, raise_exception=True)
 
+class DamageTypeList(generics.ListAPIView):
+	queryset = models.DamageType.objects.all()
+	serializer_class = serializers.DamageTypeSerializer
 
 @csrf_exempt
 @api_view(['POST'])
@@ -85,3 +88,26 @@ def check_in(request):
 
 	return Response(serializers.RentalSerializer(rental).data, status=status.HTTP_200_OK)
 #end checkin	
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes((permissions.IsAuthenticated,))
+@permission_required('bikeshare.report_damage')
+def report_damage(request):
+	serializer = serializers.ReportDamageRequestSerializer(data=request.data)
+	if not serializer.is_valid(): return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	# Load the bike (if present)
+	bike = get_object_or_404(models.Bike, id=serializer.validated_data['bike'])
+	damage_type = get_object_or_404(models.DamageType, id=serializer.validated_data['damage_type'])
+
+	damage_report = models.DamageReport.objects.create(
+		reporter=request.user,
+		bike=bike,
+		damage_type=damage_type,
+		comments=serializer.validated_data['comments']
+	)
+
+	return Response(serializers.DamageReportSerializer(damage_report).data, status=status.HTTP_200_OK)
+#end report_damage	
+	

@@ -118,6 +118,11 @@ class DamageReport(models.Model):
 	comments = models.TextField(help_text='Additional comments about the damage')
 	resolved_by = models.ForeignKey(MaintenanceReport, on_delete=models.CASCADE, blank=True, null=True, help_text='The maintenance report that resolved this damage')
 
+	class Meta:
+		permissions = (
+			('report_damage', 'Can report damage to a bike'),
+		)
+
 	def __str__(self):
 		return '{} - {}'.format(self.bike.id, self.damage_type.name)
 	#enddef
