@@ -1,17 +1,36 @@
 from django.contrib.auth.decorators import permission_required as __permission_required
 from django.db import transaction
 from django.db.models import Case, When, F
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view as __api_view, permission_classes
 from rest_framework import permissions, status, generics
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from . import models, serializers, exceptions
 
 def permission_required(perm):
 	return __permission_required(perm, raise_exception=True)
+
+def api_view(*args, **kwargs):
+	"""
+	Wrapper to provide more useful 404 errors. rest framework
+	subs in a very generic error message if it catches a 404
+	"""
+	api_wrapper_func = __api_view(*args, **kwargs)
+
+	def wrapper(func):
+		def exception_translator(*f_args, **f_kwargs):
+			try: func(*f_args, **f_kwargs)
+			except Http404 as e: raise NotFound(detail=str(e))
+
+		return api_wrapper_func(exception_translator)
+	#end wrapper
+
+	return wrapper
 
 class DamageTypeList(generics.ListAPIView):
 	queryset = models.DamageType.objects.all()
