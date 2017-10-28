@@ -103,7 +103,7 @@ class DamageType(models.Model):
 	id = models.SlugField(primary_key=True, help_text='The ID for this damage type')
 	name = models.CharField(max_length=50, help_text='Friendly name of this damage, such as "Flat tire"')
 	description = models.CharField(max_length=255, help_text='Description of what this damage type means')
-
+	force_critical = models.BooleanField(help_text='Should this damage type always be critical?')
 
 	def __str__(self):
 		return self.name
@@ -114,8 +114,9 @@ class DamageReport(models.Model):
 	reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, help_text='The user who reported the damage')
 	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was damaged')
 	damage_type = models.ForeignKey(DamageType, on_delete=models.PROTECT, help_text='The type of damage done')
-	reported_at = models.DateTimeField(auto_now_add=True, help_text='When the damage was reported')
 	comments = models.TextField(help_text='Additional comments about the damage')
+	critical = models.BooleanField(help_text='If this damage interferes with the operation of the bike. Selecting this makes the bike unavailable for rental.')
+	reported_at = models.DateTimeField(auto_now_add=True, help_text='When the damage was reported')
 	resolved_by = models.ForeignKey(MaintenanceReport, on_delete=models.CASCADE, blank=True, null=True, help_text='The maintenance report that resolved this damage')
 
 	class Meta:

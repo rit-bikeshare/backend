@@ -24,7 +24,7 @@ def api_view(*args, **kwargs):
 
 	def wrapper(func):
 		def exception_translator(*f_args, **f_kwargs):
-			try: func(*f_args, **f_kwargs)
+			try: return func(*f_args, **f_kwargs)
 			except Http404 as e: raise NotFound(detail=str(e))
 
 		return api_wrapper_func(exception_translator)
@@ -54,8 +54,12 @@ def checkout(request):
 
 		if not bike.visible and not request.user.has_perm('bikeshare.rent_hidden_bike'): raise exceptions.BikeNotRentableException()
 
-		# Check for unresolved damage
-		if models.DamageReport.objects.filter(bike=bike, resolved_by=None).exists(): raise exceptions.BikeDamagedException()
+		# Check for unresolved critical damage
+		if models.DamageReport.objects.filter(
+			bike=bike,
+			resolved_by=None,
+			critical=True
+		).exists(): raise exceptions.BikeDamagedException()
 
 		# Make a new rental. For now the duration is hardcoded
 		rental_start = models.Rental.get_rental_start()
@@ -124,7 +128,8 @@ def report_damage(request):
 		reporter=request.user,
 		bike=bike,
 		damage_type=damage_type,
-		comments=serializer.validated_data['comments']
+		comments=serializer.validated_data['comments'],
+		critical=(serializer.validated_data['critical'] or damage_type.force_critical)
 	)
 
 	return Response(serializers.DamageReportSerializer(damage_report).data, status=status.HTTP_200_OK)
