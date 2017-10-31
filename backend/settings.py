@@ -38,9 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'constance', # DB-backed settings
+    'constance.backends.database',
+
     'admin_reorder',
+    
     'rest_framework',
+    
     'shib_auth',
+    
     'bikeshare'
 ]
 
@@ -52,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'shib_auth.middleware.ShibbolethRemoteUserMiddleware',
+    'bikeshare.middleware.MaintenanceInterceptorMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -78,10 +85,23 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 ADMIN_REORDER = (
     'bikeshare',
+    'constance',
     # Cross-linked models
     {'app': 'auth', 'models': ('auth.Group', 'bikeshare.BikeshareUser')},
 )
 
+# Setting editable through admin interface
+CONSTANCE_CONFIG = {
+    'ALLOW_CHECKOUT': (True, 'Should the app allow users to check out a bike'),
+    'CHECKOUT_DISALLOWED_MESSAGE': ('Bikeshare checkout has been closed until Spring. Check back later!',
+        'Message to display when checkout is disabled and user attempts checkout'
+    ),
+    'MAINTENANCE_MODE': (False, 'Set to True to disable system'),
+    'MAINTENANCE_MESSAGE': ('Bikeshare is currently unavailable. Please try again later.',
+        'Message to display when a user accesses the app in mainenance mode'
+    )    
+}
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases

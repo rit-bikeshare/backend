@@ -1,6 +1,14 @@
 from rest_framework import status
 from rest_framework.exceptions import APIException
 
+class CheckoutDisabledException(APIException):
+	status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+	default_detail = 'Bikes cannot be rented'
+	default_code = 'checkout_disallowed'
+
+	def __init__(self, message):
+		self.detail = message
+
 class AlreadyRentedException(APIException):
 	status_code = status.HTTP_409_CONFLICT
 	default_detail = 'This bike is already rented!'
