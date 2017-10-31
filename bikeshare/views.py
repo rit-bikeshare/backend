@@ -37,6 +37,14 @@ class DamageTypeList(generics.ListAPIView):
 	queryset = models.DamageType.objects.all()
 	serializer_class = serializers.DamageTypeSerializer
 
+class BikeRackList(generics.ListAPIView):
+	queryset = models.BikeRack.objects.all()
+	serializer_class = serializers.BikeRackSerializer
+
+class BikeList(generics.ListAPIView):
+	queryset = models.Bike.objects.all()
+	serializer_class = serializers.BikeSerializer
+
 @csrf_exempt
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))

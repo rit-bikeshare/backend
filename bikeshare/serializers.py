@@ -2,10 +2,16 @@ from rest_framework import serializers
 
 from . import models
 
+class BikeRackSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.BikeRack
+		fields = '__all__'		
+
 class BikeSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Bike
-
+		fields = '__all__'
+		
 class RentalSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Rental
