@@ -1,3 +1,4 @@
+from constance import config
 from django.contrib.auth.decorators import permission_required as __permission_required
 from django.db import transaction
 from django.db.models import Case, When, F
@@ -41,6 +42,8 @@ class DamageTypeList(generics.ListAPIView):
 @permission_classes((permissions.IsAuthenticated,))
 @permission_required('bikeshare.rent_bike')
 def checkout(request):
+	if not config.ALLOW_CHECKOUT: raise exceptions.CheckoutDisabledException(config.CHECKOUT_DISALLOWED_MESSAGE)
+
 	serializer = serializers.CheckoutRequestSerializer(data=request.data)
 	if not serializer.is_valid(): return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

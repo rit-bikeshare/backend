@@ -11,6 +11,7 @@ python_version = "3.5"
 django = "*"
 "django-modeladmin-reorder" = "*"
 djangorestframework = "*"
+"django-constance" = {extras = ["database"]}
 
 
 [dev-packages]
