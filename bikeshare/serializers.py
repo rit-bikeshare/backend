@@ -1,11 +1,30 @@
+import decimal
 from rest_framework import serializers
 
 from . import models
 
 class BikeRackSerializer(serializers.ModelSerializer):
+	bike_count = serializers.SerializerMethodField()
+
 	class Meta:
 		model = models.BikeRack
 		fields = '__all__'		
+
+	def get_bike_count(self, obj):
+		user = self.context['request'].user
+		rentable_bikes = models.Bike.rentable_bikes(user)
+
+		lat, lon = obj.lat, obj.lon
+
+		tol = decimal.Decimal(.001)
+
+		return rentable_bikes.filter(
+			lat__gt=lat-tol,
+			lat__lt=lat+tol,
+			lon__lt=lon+tol,
+			lon__gt=lon-tol
+		).count()
+
 
 class BikeSerializer(serializers.ModelSerializer):
 	class Meta:
