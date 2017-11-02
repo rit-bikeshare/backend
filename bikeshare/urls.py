@@ -2,6 +2,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
+	url('^can-checkout/$', views.can_checkout),
 	url('^checkout/$', views.checkout),
 	url('^checkin/$', views.check_in),
 	url('^report-damage/$', views.report_damage),

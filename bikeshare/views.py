@@ -57,11 +57,9 @@ def get_status(request):
 #end get_status
 get_status.disable_maint_check = True
 
-@csrf_exempt
-@api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
 @permission_required('bikeshare.rent_bike')
-def checkout(request):
+def _checkout(request, dry_run):
 	if not config.ALLOW_CHECKOUT: raise exceptions.CheckoutDisabledException(config.CHECKOUT_DISALLOWED_MESSAGE)
 
 	serializer = serializers.CheckoutRequestSerializer(data=request.data)
@@ -93,11 +91,25 @@ def checkout(request):
 		bike.current_rental = rental
 		bike.save()
 
-		if serializer.validated_data['dry_run']:
+		if dry_run:
 			raise exceptions.DryRunSucceeded()
 	#end transaction
 
 	return Response(serializers.RentalSerializer(rental).data, status=status.HTTP_201_CREATED)
+#end checkout
+
+
+@csrf_exempt
+@api_view(['POST'])
+def checkout(request):
+	return _checkout(request, False)
+#end checkout
+
+@csrf_exempt
+@api_view(['POST'])
+def can_checkout(request):
+	try: _checkout(request, True)
+	except exceptions.DryRunSucceeded: return Response({'success': True}, status.HTTP_200_OK)
 #end checkout
 
 @csrf_exempt
