@@ -92,6 +92,9 @@ def checkout(request):
 
 		bike.current_rental = rental
 		bike.save()
+
+		if serializer.validated_data['dry_run']:
+			raise exceptions.DryRunSucceeded()
 	#end transaction
 
 	return Response(serializers.RentalSerializer(rental).data, status=status.HTTP_201_CREATED)

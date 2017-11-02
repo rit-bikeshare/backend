@@ -52,6 +52,7 @@ class DamageTypeSerializer(serializers.ModelSerializer):
 
 class CheckoutRequestSerializer(serializers.Serializer):
 	bike = serializers.SlugField()
+	dry_run = serializers.BooleanField(required=False, default=False)
 
 class CheckInRequestSerializer(serializers.Serializer):
 	bike = serializers.SlugField()
