@@ -96,10 +96,10 @@ def check_in(request):
 	bikerack_id = serializer.validated_data.get('bikerack', None)
 	if bikerack_id:
 		# They gave us a bikerack, so look up its coords
-		lat, lon = get_object_or_404(models.BikeRack.objects.values_list('lat', 'lon'), id=bikerack_id)
+		location = get_object_or_404(models.BikeRack.objects.values_list('location'), id=bikerack_id)
 	else:
 		# Gave us coords directly
-		lat, lon = serializer.validated_data['lat'], serializer.validated_data['lon']
+		location = serializer.validated_data['location']
 	#endif
 
 	with transaction.atomic():
@@ -116,7 +116,7 @@ def check_in(request):
 
 		# clear the rental and update coords
 		bike.current_rental = None
-		bike.lat, bike.lon = lat, lon
+		bike.location = location
 		bike.save()
 	#end transaction
 

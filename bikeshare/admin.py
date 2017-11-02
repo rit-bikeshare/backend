@@ -1,5 +1,7 @@
+from constance import config
 from django import forms
-from django.contrib import admin
+from django.contrib.gis import admin
+from django.contrib.gis.geos import Point
 from django.utils.translation import gettext, gettext_lazy as _
 
 from . import models
@@ -18,10 +20,22 @@ class BikeshareUserAdmin(ShibUserAdmin):
 	filter_horizontal = ('groups', 'user_permissions', 'user_denied_permissions')
 
 
+class DynamicStartMixin(admin.OSMGeoAdmin):
+	def get_map_widget(self, *args, **kwargs):
+		map = super().get_map_widget(*args, **kwargs)
+		# OSM uses 3857 encoding while most humans use lat/lng, so convert it automatically
+		pnt = Point(config.ADMIN_DEFAULT_LON, config.ADMIN_DEFAULT_LAT, srid=4326)
+		pnt.transform(3857)
+		map.params['default_lon'] = pnt.x
+		map.params['default_lat'] = pnt.y
+		map.params['default_zoom'] = config.ADMIN_DEFAULT_ZOOM
+		return map
+#endclass
+
 @admin.register(models.BikeRack)
-class BikeRackAdmin(admin.ModelAdmin):
+class BikeRackAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 	# Controls the summary view
-	list_display = ('name', 'description', 'lon', 'lat', 'id')
+	list_display = ('name', 'description', 'id')
 	search_fields = ('name', 'id')
 	ordering = ('name',)
 
@@ -32,7 +46,7 @@ class BikeRackAdmin(admin.ModelAdmin):
 			'fields': ('name', 'description') 
 		}),
 		('Location', {
-			'fields': (('lon', 'lat'),)
+			'fields': (('location', 'check_in_area'),)
 		}),
 		('Advanced', {
 			'fields': ('id',)
@@ -68,7 +82,7 @@ class RentalAdmin(admin.ModelAdmin):
 		return d
 
 @admin.register(models.Bike)
-class BikeAdmin(admin.ModelAdmin):
+class BikeAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 	# Controls the summary view
 	list_display = ('id', 'is_rented', 'visible')
 	search_fields = ('id',)
@@ -77,7 +91,7 @@ class BikeAdmin(admin.ModelAdmin):
 	# Controls the add/change pages
 	fieldsets = (
 		('General', {
-			'fields': ('visible', 'lat', 'lon') 
+			'fields': ('visible', 'location') 
 		}),
 		('Advanced', {
 			'fields': ('id', 'current_rental')

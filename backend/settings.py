@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 
     'constance', # DB-backed settings
     'constance.backends.database',
@@ -99,16 +100,21 @@ CONSTANCE_CONFIG = {
     'MAINTENANCE_MODE': (False, 'Set to True to disable system'),
     'MAINTENANCE_MESSAGE': ('Bikeshare is currently unavailable. Please try again later.',
         'Message to display when a user accesses the app in mainenance mode'
-    )    
+    ),
+
+    'ADMIN_DEFAULT_LAT': (43.08397722062759, 'Default lat of map in admin interface'),
+    'ADMIN_DEFAULT_LON': (-77.67605446140749, 'Default lon of map in admin interface'),
+    'ADMIN_DEFAULT_ZOOM': (15, 'Default zoom of map in admin interface'),
 }
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
