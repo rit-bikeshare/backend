@@ -92,19 +92,24 @@ ADMIN_REORDER = (
 )
 
 # Setting editable through admin interface
-CONSTANCE_CONFIG = {
-    'ALLOW_CHECKOUT': (True, 'Should the app allow users to check out a bike'),
-    'CHECKOUT_DISALLOWED_MESSAGE': ('Bikeshare checkout has been closed until Spring. Check back later!',
+from collections import OrderedDict
+CONSTANCE_CONFIG = OrderedDict([
+    ('ALLOW_CHECKOUT', (True, 'Should the app allow users to check out a bike')),
+    ('CHECKOUT_DISALLOWED_MESSAGE', ('Bikeshare checkout has been closed until Spring. Check back later!',
         'Message to display when checkout is disabled and user attempts checkout'
-    ),
-    'MAINTENANCE_MODE': (False, 'Set to True to disable system'),
-    'MAINTENANCE_MESSAGE': ('Bikeshare is currently unavailable. Please try again later.',
+    )),
+    ('MAINTENANCE_MODE', (False, 'Set to True to disable system')),
+    ('MAINTENANCE_MESSAGE', ('Bikeshare is currently unavailable. Please try again later.',
         'Message to display when a user accesses the app in mainenance mode'
-    ),
+    )),
 
-    'ADMIN_DEFAULT_LAT': (43.08397722062759, 'Default lat of map in admin interface'),
-    'ADMIN_DEFAULT_LON': (-77.67605446140749, 'Default lon of map in admin interface'),
-    'ADMIN_DEFAULT_ZOOM': (15, 'Default zoom of map in admin interface'),
+    ('ADMIN_DEFAULT_LAT', (43.08397722062759, 'Default lat of map in admin interface')),
+    ('ADMIN_DEFAULT_LON', (-77.67605446140749, 'Default lon of map in admin interface')),
+    ('ADMIN_DEFAULT_ZOOM', (15, 'Default zoom of map in admin interface')),
+])
+CONSTANCE_CONFIG_FIELDSETS = {
+    'Maintenance Settings': ('ALLOW_CHECKOUT', 'CHECKOUT_DISALLOWED_MESSAGE', 'MAINTENANCE_MODE', 'MAINTENANCE_MESSAGE'),
+    'Map Settings': ('ADMIN_DEFAULT_LAT', 'ADMIN_DEFAULT_LON', 'ADMIN_DEFAULT_ZOOM')
 }
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
