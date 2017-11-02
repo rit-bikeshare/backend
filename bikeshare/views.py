@@ -99,6 +99,7 @@ def check_in(request):
 		location = get_object_or_404(models.BikeRack.objects.values_list('location'), id=bikerack_id)
 	else:
 		# Gave us coords directly
+		if not config.ENABLE_DROP_ANYWHERE: raise exceptions.DropAnywhereNotSupportedException()
 		location = serializer.validated_data['location']
 	#endif
 

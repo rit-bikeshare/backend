@@ -94,6 +94,8 @@ ADMIN_REORDER = (
 # Setting editable through admin interface
 from collections import OrderedDict
 CONSTANCE_CONFIG = OrderedDict([
+    ('ENABLE_DROP_ANYWHERE', (False, 'Turn on or off backend support for drop anywhere')),
+
     ('ALLOW_CHECKOUT', (True, 'Should the app allow users to check out a bike')),
     ('CHECKOUT_DISALLOWED_MESSAGE', ('Bikeshare checkout has been closed until Spring. Check back later!',
         'Message to display when checkout is disabled and user attempts checkout'
@@ -108,6 +110,7 @@ CONSTANCE_CONFIG = OrderedDict([
     ('ADMIN_DEFAULT_ZOOM', (15, 'Default zoom of map in admin interface')),
 ])
 CONSTANCE_CONFIG_FIELDSETS = {
+    'Features': ('ENABLE_DROP_ANYWHERE',),
     'Maintenance Settings': ('ALLOW_CHECKOUT', 'CHECKOUT_DISALLOWED_MESSAGE', 'MAINTENANCE_MODE', 'MAINTENANCE_MESSAGE'),
     'Map Settings': ('ADMIN_DEFAULT_LAT', 'ADMIN_DEFAULT_LON', 'ADMIN_DEFAULT_ZOOM')
 }

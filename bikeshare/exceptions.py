@@ -33,3 +33,8 @@ class NotYourRentalException(APIException):
 	status_code = status.HTTP_403_FORBIDDEN
 	default_detail = "You don't have this bike rented!"
 	default_code = 'not_your_rental'
+
+class DropAnywhereNotSupportedException(APIException):
+	status_code = status.HTTP_409_CONFLICT
+	default_detail = 'Drop anywhere is not supported.'
+	default_code = 'drop_anywhere_disabled'
