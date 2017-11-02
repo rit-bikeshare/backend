@@ -45,6 +45,18 @@ class BikeList(generics.ListAPIView):
 	queryset = models.Bike.objects.all()
 	serializer_class = serializers.BikeSerializer
 
+
+@csrf_exempt
+@api_view(['GET'])
+def get_status(request):
+	val = {}
+	for k in ('ALLOW_CHECKOUT', 'CHECKOUT_DISALLOWED_MESSAGE', 'MAINTENANCE_MODE', 'MAINTENANCE_MESSAGE', 'ENABLE_DROP_ANYWHERE'):
+		val[k] = getattr(config, k)
+	
+	return Response(val, status=status.HTTP_200_OK)
+#end get_status
+get_status.disable_maint_check = True
+
 @csrf_exempt
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
