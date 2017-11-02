@@ -1,35 +1,39 @@
-import decimal
+from django.contrib.gis.geos import Point
 from rest_framework import serializers
 
 from . import models
 
 class BikeRackSerializer(serializers.ModelSerializer):
 	bike_count = serializers.SerializerMethodField()
+	lat = serializers.SerializerMethodField()
+	lon = serializers.SerializerMethodField()
 
 	class Meta:
 		model = models.BikeRack
-		fields = '__all__'		
+		exclude = ('location',)
+
+	def get_lat(self, obj): return obj.location.y
+	def get_lon(self, obj): return obj.location.x
+
 
 	def get_bike_count(self, obj):
 		user = self.context['request'].user
 		rentable_bikes = models.Bike.rentable_bikes(user)
-
-		lat, lon = obj.lat, obj.lon
-
-		tol = decimal.Decimal(.001)
-
 		return rentable_bikes.filter(
-			lat__gt=lat-tol,
-			lat__lt=lat+tol,
-			lon__lt=lon+tol,
-			lon__gt=lon-tol
+			location__within=obj.check_in_area
 		).count()
 
 
 class BikeSerializer(serializers.ModelSerializer):
+	lat = serializers.SerializerMethodField()
+	lon = serializers.SerializerMethodField()
+
 	class Meta:
 		model = models.Bike
-		fields = '__all__'
+		exclude = ('location',)
+	
+	def get_lat(self, obj): return obj.location.y
+	def get_lon(self, obj): return obj.location.x
 		
 class RentalSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -54,8 +58,8 @@ class CheckInRequestSerializer(serializers.Serializer):
 
 	# Can specify bikerack OR lat/lon
 	bikerack = serializers.SlugField(required=False)
-	lat = serializers.DecimalField(max_digits=9, decimal_places=6, required=False)
-	lon = serializers.DecimalField(max_digits=9, decimal_places=6, required=False)
+	lat = serializers.FloatField(required=False)
+	lon = serializers.FloatField(required=False)
 
 	def validate(self, data):
 		# Ensure that if we got lat, we also got lon
@@ -65,6 +69,9 @@ class CheckInRequestSerializer(serializers.Serializer):
 
 		# If we got bikerack, it's an error to supply lat/lon
 		if ('lat' in data) and ('bikerack' in data): raise serializers.ValidationError('Cannot specify both bikerack and lat/lon')
+
+		if 'lat' in data:
+			data['location'] = Point(data['lon'], data['lat'], srid=4326)
 
 		# All good
 		return data

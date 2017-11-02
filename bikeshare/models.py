@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils import timezone
 from datetime import timedelta
 
@@ -31,8 +31,8 @@ class BikeRack(models.Model):
 	id = models.SlugField(primary_key=True, help_text='The ID for this bike rack. This should match the QR code on the rack')	
 	name = models.CharField(max_length=50, blank=False, unique=True, help_text='Friendly name of the bike rack such as "Grace Watson Rack"')
 	description = models.CharField(max_length=255, blank=False, help_text='Description of where the rack is located')
-	lon = models.DecimalField(max_digits=9, decimal_places=6, help_text='Longitude of the bike rack\'s coordinates')
-	lat = models.DecimalField(max_digits=9, decimal_places=6, help_text='Latitude of the bike rack\'s coordinates')
+	location = models.PointField(help_text='Location of the bike rack')
+	check_in_area = models.PolygonField(help_text='Area where bikes can be "check in" to this bike rack')
 
 	def __str__(self):
 		return self.name
@@ -42,8 +42,7 @@ class BikeRack(models.Model):
 class Bike(models.Model):
 	id = models.SlugField(primary_key=True, help_text='ID for the bike. This should match the QR code on the bike')
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
-	lon = models.DecimalField(max_digits=9, decimal_places=6, help_text='Longitude of the bike\'s coordinates')
-	lat = models.DecimalField(max_digits=9, decimal_places=6, help_text='Latitude of the bike\'s coordinates')
+	location = models.PointField(help_text='Location of the bike')
 	current_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The current rental for this bike', related_name='current_rental')
 
 	class Meta:
