@@ -45,6 +45,15 @@ class BikeList(generics.ListAPIView):
 	queryset = models.Bike.objects.all()
 	serializer_class = serializers.BikeSerializer
 
+class UserRentals(generics.ListAPIView):
+	serializer_class = serializers.RentalSerializer
+
+	def get_queryset(self):
+		return models.Rental.objects.filter(
+			renter=self.request.user,
+			returned_at=None
+		)
+
 
 @csrf_exempt
 @api_view(['GET'])
@@ -184,5 +193,4 @@ def report_damage(request):
 	)
 
 	return Response(serializers.DamageReportSerializer(damage_report).data, status=status.HTTP_200_OK)
-#end report_damage	
-	
+#end report_damage
