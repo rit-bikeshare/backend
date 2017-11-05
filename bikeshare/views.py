@@ -57,6 +57,18 @@ def get_status(request):
 #end get_status
 get_status.disable_maint_check = True
 
+@csrf_exempt
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated,))
+def user_info(request):
+	user = request.user
+
+	val = {}
+	for k in ('first_name', 'last_name', 'username'):
+		val[k] = getattr(user, k, '')
+
+	return Response(val, status=status.HTTP_200_OK)
+
 @permission_classes((permissions.IsAuthenticated,))
 @permission_required('bikeshare.rent_bike')
 def _checkout(request, dry_run):

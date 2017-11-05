@@ -154,7 +154,7 @@ SHIB_MOCK = True
 SHIB_MOCK_ATTRIBUTES = {
 	'uid': 'test',
 	'sn' : 'McTestface',
-	'first_name': 'Testy'
+	'givenName': 'Testy'
 }
 
 AUTH_USER_MODEL = 'bikeshare.BikeshareUser'

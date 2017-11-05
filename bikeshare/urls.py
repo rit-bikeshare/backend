@@ -9,5 +9,6 @@ urlpatterns = [
 	url('^damage-types/list/$', views.DamageTypeList.as_view()),
 	url('^bike-racks/list/$', views.BikeRackList.as_view()),
 	url('^bikes/list/$', views.BikeList.as_view()),
-	url('^status/$', views.get_status)
+	url('^status/$', views.get_status),
+	url('^user/$', views.user_info)
 ]

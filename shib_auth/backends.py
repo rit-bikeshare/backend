@@ -43,12 +43,15 @@ class ShibbolethRemoteUserBackend(RemoteUserBackend):
 		else:
 			try:
 				user = User.objects.get(username=username)
+				user.__dict__.update(shib_user_params)
+				user.save()
 			except User.DoesNotExist:
 				return
 			
-		# After receiving a valid user, we update the the user attributes according to the shibboleth parameters. 
-		user.__dict__.update(**shib_user_params)
-		user.save()
+		# After receiving a valid user, we update the the user attributes according to the shibboleth parameters.
+		for k in shib_meta:
+			if k not in field_names:
+				setattr(user, k, shib_meta[k]) 
 		return user if self.user_can_authenticate(user) else None
 
 	def user_can_authenticate(self, user):

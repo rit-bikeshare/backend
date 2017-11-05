@@ -37,12 +37,6 @@ class ShibbolethRemoteUserMiddleware(RemoteUserMiddleware):
         # If we got None or an empty value, this is still an anonymous user.
         if not username:
             return
-        # If the user is already authenticated and that user is the user we are
-        # getting passed in the headers, then the correct user is already
-        # persisted in the session and we don't need to continue.
-        if request.user.is_authenticated:
-            if request.user.username == self.clean_username(username, request):
-                return
 
         # Make sure we have all required Shiboleth elements before proceeding.
         shib_meta, error = self.parse_attributes(request)
