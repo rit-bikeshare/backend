@@ -12,6 +12,7 @@ django = "*"
 "django-modeladmin-reorder" = "*"
 djangorestframework = "*"
 "django-constance" = {extras = ["database"]}
+"djangorestframework-camel-case" = "*"
 
 
 [dev-packages]
