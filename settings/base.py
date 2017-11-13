@@ -15,17 +15,17 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*$#$!#g=14t2hxjgw&itpm*^pqq=j&)u8zrq8cph(ev8v(w9ne'
+SECRET_KEY = None
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
+
+APPEND_SLASH = False
+
+CSRF_COOKIE_AGE = None
 
 
 # Application definition
@@ -47,6 +47,8 @@ INSTALLED_APPS = [
 	'rest_framework',
 	
 	'shib_auth',
+
+	'app',
 	
 	'bikeshare'
 ]
@@ -64,7 +66,7 @@ MIDDLEWARE = [
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
 	{
@@ -82,13 +84,13 @@ TEMPLATES = [
 	},
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 ADMIN_REORDER = (
 	'bikeshare',
 	'constance',
 	# Cross-linked models
-	{'app': 'auth', 'models': ('auth.Group', 'bikeshare.BikeshareUser')},
+	{'app': 'auth', 'models': ('auth.Group', 'app.BikeshareUser')},
 )
 
 # Setting editable through admin interface
@@ -116,31 +118,32 @@ CONSTANCE_CONFIG_FIELDSETS = {
 }
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+DATABASES = {}
 
-SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
-DATABASES = {
-	'default': {
-		'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-	}
-}
+# Try to use database from ENV
+if 'DATABASE_URL' in os.environ:
+	try:
+		import dj_database_url
+		DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+	except ImportError:
+		from django.core.exceptions import ImproperlyConfigured
+		raise ImproperlyConfigured("Found DATABASE_URL variable but couldn't "
+		"import dj-database-url package. Did you remember to install it?")
 
 REST_FRAMEWORK = {
-	'DEFAULT_AUTHENTICATION_CLASSES': ('bikeshare.rest_auth.NoCsrfSessionAuthentication',),
+	'DEFAULT_AUTHENTICATION_CLASSES': ('app.rest_auth.NoCsrfSessionAuthentication',),
 
-	'DEFAULT_RENDERER_CLASSES': (
+	'DEFAULT_RENDERER_CLASSES': [
 		'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
-	),
+	],
 
-	'DEFAULT_PARSER_CLASSES': (
+	'DEFAULT_PARSER_CLASSES': [
 		'djangorestframework_camel_case.parser.CamelCaseJSONParser',
-	),
+	],
 }
 
 AUTHENTICATION_BACKENDS = (
-	'bikeshare.backends.BikeshareRemoteUserBackend',
+	'app.backends.BikeshareRemoteUserBackend',
 )
 
 SHIB_USERNAME_ATTRIB_NAME = 'uid'
@@ -150,14 +153,14 @@ SHIB_ATTRIBUTE_MAP = {
 	"givenName": (False, "first_name")
 }
 
-SHIB_MOCK = True
+SHIB_MOCK = False
 SHIB_MOCK_ATTRIBUTES = {
 	'uid': 'test',
 	'sn' : 'McTestface',
 	'givenName': 'Testy'
 }
 
-AUTH_USER_MODEL = 'bikeshare.BikeshareUser'
+AUTH_USER_MODEL = 'app.BikeshareUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

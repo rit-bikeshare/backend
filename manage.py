@@ -3,7 +3,6 @@ import os
 import sys
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError:
@@ -19,4 +18,8 @@ if __name__ == "__main__":
                 "forget to activate a virtual environment?"
             )
         raise
+
+    if 'DJANGO_SETTINGS_MODULE' not in os.environ:
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured('You must define the environment variable DJANGO_SETTINGS_MODULE.')
     execute_from_command_line(sys.argv)

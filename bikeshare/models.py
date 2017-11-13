@@ -3,30 +3,6 @@ from django.contrib.gis.db import models
 from django.utils import timezone
 from datetime import timedelta
 
-from shib_auth.models import AbstractShibUser, ShibUserManager
-from extended_auth.models import ExtendedPermissionsMixin
-
-class BikeshareUser(ExtendedPermissionsMixin, AbstractShibUser):
-	objects = ShibUserManager()
-
-	def get_full_name(self):
-		firstName, lastName = getattr(self, 'first_name', None), getattr(self, 'last_name', None)
-
-		if firstName and lastName: return '{} {}'.format(firstName, lastName)
-		if firstName: return firstName
-		if lastName: return lastName
-		return self.username
-	#enddef
-
-	def get_short_name(self):
-		if hasattr(self, 'first_name'): return self.first_name
-		return self.username
-	#endif
-
-	def __str__(self):
-		return self.username
-	#enddef
-
 class BikeRack(models.Model):
 	id = models.SlugField(primary_key=True, help_text='The ID for this bike rack. This should match the QR code on the rack')	
 	name = models.CharField(max_length=50, blank=False, unique=True, help_text='Friendly name of the bike rack such as "Grace Watson Rack"')
