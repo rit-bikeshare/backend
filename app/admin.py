@@ -1,12 +1,12 @@
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.gis import admin
 from django.utils.translation import gettext, gettext_lazy as _
 
 from . import models
 
-from shib_auth.admin import ShibUserAdmin
 
 @admin.register(models.BikeshareUser)
-class BikeshareUserAdmin(ShibUserAdmin):
+class BikeshareUserAdmin(UserAdmin):
 	fieldsets = (
         (None, {'fields': ('username',)}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',

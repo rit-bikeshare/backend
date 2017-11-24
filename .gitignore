@@ -105,3 +105,4 @@ venv.bak/
 
 db.sqlite3
 my_settings.py
+migrations/

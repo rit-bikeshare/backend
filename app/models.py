@@ -1,13 +1,18 @@
-from shib_auth.models import AbstractShibUser, ShibUserManager
+from django.contrib.auth.models import AbstractUser, UserManager
 from extended_auth.models import ExtendedPermissionsMixin
 
-class BikeshareUser(ExtendedPermissionsMixin, AbstractShibUser):
-	objects = ShibUserManager()
+class BikeshareUserManager(UserManager):
+	def create_superuser(self, username, email=None, password=None, **extra_fields):
+		super().create_superuser(username, email, password, **extra_fields)
+
+class BikeshareUser(ExtendedPermissionsMixin, AbstractUser):
+	objects = BikeshareUserManager()
+	REQUIRED_FIELDS = []
 
 	def get_full_name(self):
 		firstName, lastName = getattr(self, 'first_name', None), getattr(self, 'last_name', None)
 
-		if firstName and lastName: return '{} {}'.format(firstName, lastName)
+		if firstName and lastName: return '{} {}'.format(firstName, lastName).strip()
 		if firstName: return firstName
 		if lastName: return lastName
 		return self.username

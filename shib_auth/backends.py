@@ -4,55 +4,38 @@ from django.conf import settings
 
 
 class ShibbolethRemoteUserBackend(RemoteUserBackend):
-	"""
-	This backend is to be used in conjunction with the ``RemoteUserMiddleware``
-	found in the middleware module of this package, and is used when the server
-	is handling authentication outside of Django.
-	By default, the ``authenticate`` method creates ``User`` objects for
-	usernames that don't already exist in the database.  Subclasses can disable
-	this behavior by setting the ``create_unknown_user`` attribute to
-	``False``.
-	"""
-
 	# Create a User object if not already in the database?
-	create_unknown_user = True
-	if hasattr(settings, 'CREATE_UNKNOWN_USER'):
-		create_unknown_user = settings.CREATE_UNKNOWN_USER
+	create_unknown_user = getattr(settings, 'CREATE_UNKNOWN_USER', True)
 
-	def authenticate(self, remote_user, shib_meta):
-		"""
-		The username passed as ``remote_user`` is considered trusted.  This
-		method simply returns the ``User`` object with the given username,
-		creating a new ``User`` object if ``create_unknown_user`` is ``True``.
-		Returns None if ``create_unknown_user`` is ``False`` and a ``User``
-		object with the given username is not found in the database.
-		"""
-		if not remote_user:
-			return
-		User = get_user_model()
-		username = self.clean_username(remote_user)
-		field_names = [x.name for x in User._meta.get_fields()]
-		shib_user_params = dict([(k, shib_meta[k]) for k in field_names if k in shib_meta])
-		# Note that this could be accomplished in one try-except clause, but
-		# instead we use get_or_create when creating unknown users since it has
-		# built-in safeguards for multiple threads.
+	def authenticate(self, request, remote_user, **kwargs):
+		if not remote_user: return
+
+		UserModel = get_user_model()
+		usernameDict = { UserModel.USERNAME_FIELD: self.clean_username(remote_user) }
+
+		model_field_names = [x.name for x in UserModel._meta.get_fields()]
+		model_field_dict = dict([(x, kwargs[x]) for x in kwargs if x in model_field_names])
+
 		if self.create_unknown_user:
-			user, created = User.objects.get_or_create(username=username, defaults=shib_user_params)
-			if created:
-				user = self.configure_user(user)
+			user, created = UserModel.objects.get_or_create(**usernameDict, defaults=kwargs)
+			if created: self.configure_user(user, extra=kwargs)
 		else:
-			try:
-				user = User.objects.get(username=username)
-				user.__dict__.update(shib_user_params)
-				user.save()
-			except User.DoesNotExist:
-				return
-			
-		# After receiving a valid user, we update the the user attributes according to the shibboleth parameters.
-		for k in shib_meta:
-			if k not in field_names:
-				setattr(user, k, shib_meta[k]) 
+			try: user = User.objects.get(**usernameDict)
+			except UserModel.DoesNotExist: return # Bail out if we can't find the user
+		#endif
+
+		user.__dict__.update(model_field_dict)
+		
+		self.update_shib_params(user, kwargs)
+		
+		user.save()
+
 		return user if self.user_can_authenticate(user) else None
+
+	def update_shib_params(self, user, params): pass
+
+	def configure_user(self, user, extra):
+		user.set_unusable_password()
 
 	def user_can_authenticate(self, user):
 		"""

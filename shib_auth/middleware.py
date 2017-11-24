@@ -22,37 +22,50 @@ class ShibbolethRemoteUserMiddleware(RemoteUserMiddleware):
                 " 'django.contrib.auth.middleware.AuthenticationMiddleware'"
                 " before the RemoteUserMiddleware class.")
 
-        # To support logout.  If this variable is True, do not
+        # To support logout. If this variable is True, do not
         # authenticate user and return now.
-        if request.session.get(SHIB_FORCE_REAUTH_SESSION_KEY):
-            return
+        if request.session.get(SHIB_FORCE_REAUTH_SESSION_KEY): return
         else:
             # Delete the shib reauth session key if present.
             request.session.pop(SHIB_FORCE_REAUTH_SESSION_KEY, None)
 
+        # inject shib attributes
         if settings.DEBUG and SHIB_MOCK:
             request.META.update(SHIB_MOCK_ATTRIBUTES)
 
         username = request.META.get(SHIB_USERNAME_ATTRIB_NAME, None)
         # If we got None or an empty value, this is still an anonymous user.
-        if not username:
-            return
+        if not username: return
+
+        # Check if a different user is already logged in to this session
+        # If so, log them out
+        if not request.user.is_anonymous() and request.user.username != self.clean_username(username, request):
+            auth.logout()
+            request.session.flush() # Force the session to be discarded
 
         # Make sure we have all required Shiboleth elements before proceeding.
-        shib_meta, error = self.parse_attributes(request)
+        shib_meta, missing = self.parse_attributes(request)
         # Add parsed attributes to the session.
         request.session['shib'] = shib_meta
-        if error:
-            raise ShibbolethValidationError("All required Shibboleth elements not found.  %s" % shib_meta)
+        if len(missing) != 0:
+            raise ShibbolethValidationError("All required Shibboleth elements not found. Missing: %s" % missing)
 
-        # We are seeing this user for the first time in this session, attempt
-        # to authenticate the user.
-        user = auth.authenticate(remote_user=username, shib_meta=shib_meta)
-        if user:
+        if request.user.is_anonymous():
+            # We are seeing this user for the first time in this session, attempt
+            # to authenticate the user.
+            user = auth.authenticate(request, remote_user=username, **shib_meta)
+            if not user: return
+
             # User is valid.  Set request.user and persist user in the session
             # by logging the user in.
-            request.user = user
             auth.login(request, user)
+        #endif
+
+        # We now have a valid user instance
+        # Update its attributes with our shib meta to capture
+        # any values that aren't on our model
+        request.user.__dict__.update(shib_meta)
+
 
     @staticmethod
     def parse_attributes(request):
@@ -62,16 +75,19 @@ class ShibbolethRemoteUserMiddleware(RemoteUserMiddleware):
         Pull the mapped attributes from the apache headers.
         """
         shib_attrs = {}
-        error = False
+
+        missing = []
+        
         meta = request.META
         for header, attr in list(SHIB_ATTRIBUTE_MAP.items()):
             required, name = attr
             value = meta.get(header, None)
-            shib_attrs[name] = value
-            if not value or value == '':
-                if required:
-                    error = True
-        return shib_attrs, error
+            if required and (not value or value == ''):
+                missing.append(name)
+            else:
+                shib_attrs[name] = value
+
+        return shib_attrs, missing
 
 
 class ShibbolethValidationError(Exception):
