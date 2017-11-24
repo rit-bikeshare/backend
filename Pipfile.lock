@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fdb734d959264dac6480a828d9136e3130322b045b18f54abfe93c5ade1a07ed"
+            "sha256": "39974f41757187370cf78d1ee3a6dc32fd8888bfaa444e94f0211e4e50edd2d1"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.4.0-98-generic",
+            "platform_release": "4.4.0-97-generic",
             "platform_system": "Linux",
-            "platform_version": "#121-Ubuntu SMP Tue Oct 10 14:24:03 UTC 2017",
+            "platform_version": "#120-Ubuntu SMP Tue Sep 19 17:28:18 UTC 2017",
             "python_full_version": "3.5.2",
             "python_version": "3.5",
             "sys_platform": "linux"
@@ -58,16 +58,23 @@
         },
         "djangorestframework": {
             "hashes": [
-                "sha256:cd7f0f678d63e2be561834ff2049eef6d9fd6fb85c63bea7e94597b36c015bf4",
-                "sha256:305b2c6564ca46d3b558ba21110ed717135c467adf1a6dfd192bd85f4bb04d50"
+                "sha256:79268055755125caaebface3acbe13150bbc3a83b78e9bf1a1abfde7ab0c5231",
+                "sha256:067960e5e9e5586d3b2d53a1d626c4800dc33cd8309487d404fc63355674556f"
             ],
-            "version": "==3.7.1"
+            "version": "==3.7.3"
         },
         "djangorestframework-camel-case": {
             "hashes": [
                 "sha256:989c5c2d0324069fc1ecea4a5cb8913749d5f2f3c507b38977913ff1b76a719e"
             ],
             "version": "==0.2.0"
+        },
+        "djangorestframework-gis": {
+            "hashes": [
+                "sha256:3b8b6a2297410d2a738a3548e8b030bd2e0210090435affa4bfdee9b3de65f20",
+                "sha256:80f5e024079f23421c7a34123eb0f50e8a324a61fc1366ed0173aa1a89d766a7"
+            ],
+            "version": "==0.12"
         },
         "pytz": {
             "hashes": [
@@ -82,6 +89,13 @@
                 "sha256:fae4cffc040921b8a2d60c6cf0b5d662c1190fe54d718271db4eb17d44a185b7"
             ],
             "version": "==2017.3"
+        },
+        "six": {
+            "hashes": [
+                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb",
+                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
+            ],
+            "version": "==1.11.0"
         }
     },
     "develop": {}

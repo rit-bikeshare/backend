@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 	'admin_reorder',
 	
 	'rest_framework',
+	'rest_framework_gis',
 	
 	'shib_auth',
 

@@ -15,7 +15,6 @@ class BikeRackSerializer(serializers.ModelSerializer):
 	def get_lat(self, obj): return obj.location.y
 	def get_lon(self, obj): return obj.location.x
 
-
 	def get_bike_count(self, obj):
 		user = self.context['request'].user
 		rentable_bikes = models.Bike.rentable_bikes(user)

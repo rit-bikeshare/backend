@@ -1,18 +1,24 @@
 [[source]]
+
 name = "pypi"
 verify_ssl = true
 url = "https://pypi.python.org/simple"
 
+
 [requires]
+
 python_version = "3.5"
+
 
 [packages]
 
 django = "*"
-"django-modeladmin-reorder" = "*"
+django-modeladmin-reorder = "*"
 djangorestframework = "*"
-"django-constance" = {extras = ["database"]}
-"djangorestframework-camel-case" = "*"
+django-constance = {extras = ["database"]}
+djangorestframework-camel-case = "*"
+djangorestframework-gis = "*"
 
 
 [dev-packages]
+
