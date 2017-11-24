@@ -61,7 +61,7 @@ class Rental(models.Model):
 	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was rented rented')
 	rented_at = models.DateTimeField(help_text='When the rental began')
 	should_return_at = models.DateTimeField(help_text='When the renter was supposed to return the bike by')
-	returned_at = models.DateTimeField(null=True, blank=True, help_text='When the bike was actually returned')
+	returned_at = models.DateTimeField(null=True, blank=True, help_text='When the bike was actually returned', db_index=True)
 
 	@classmethod
 	def get_rental_start(cls):
