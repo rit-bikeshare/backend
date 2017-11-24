@@ -31,6 +31,8 @@ CSRF_COOKIE_AGE = None
 # Application definition
 
 INSTALLED_APPS = [
+	'app', # This goes first so the admin site is swapped out
+	
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -49,8 +51,6 @@ INSTALLED_APPS = [
 	
 	'shib_auth',
 
-	'app',
-	
 	'bikeshare'
 ]
 
