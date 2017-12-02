@@ -83,6 +83,11 @@ class BikeAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 		})
 	)
 
+	def get_readonly_fields(self, request, obj=None):
+		ro = super().get_readonly_fields(request, obj)
+		if obj is not None: ro += ('id',)
+		return ro
+
 
 class MaintenanceReportForm(forms.ModelForm):
 	class Meta:

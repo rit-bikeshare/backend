@@ -16,10 +16,15 @@ class BikeRack(models.Model):
 
 
 class Bike(models.Model):
-	id = models.SlugField(primary_key=True, help_text='ID for the bike. This should match the QR code on the bike')
+	def _get_next_id():
+		try: return Bike.objects.aggregate(models.Max('id'))['id__max'] + 1
+		except Bike.DoesNotExist: return 1
+
+	id = models.IntegerField(primary_key=True, default=_get_next_id, help_text='ID for the bike. This should match the QR code on the bike')
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
 	location = models.PointField(help_text='Location of the bike')
 	current_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The current rental for this bike', related_name='current_rental')
+
 
 	class Meta:
 		permissions = (
@@ -33,7 +38,7 @@ class Bike(models.Model):
 	is_rented.boolean = True
 
 	def __str__(self):
-		return self.id
+		return str(self.id)
 	#enddef
 
 	@classmethod
