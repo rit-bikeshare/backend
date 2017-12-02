@@ -17,8 +17,8 @@ class BikeRack(models.Model):
 
 class Bike(models.Model):
 	def _get_next_id():
-		try: return Bike.objects.aggregate(models.Max('id'))['id__max'] + 1
-		except Bike.DoesNotExist: return 1
+		prev = Bike.objects.aggregate(models.Max('id'))['id__max']
+		return prev + 1 if prev is not None else 1
 
 	id = models.IntegerField(primary_key=True, default=_get_next_id, help_text='ID for the bike. This should match the QR code on the bike')
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
