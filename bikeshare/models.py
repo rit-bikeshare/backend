@@ -90,7 +90,7 @@ class Rental(models.Model):
 	is_late.boolean = True
 
 	def __str__(self):
-		return str(self.id)
+		return 'To {} on {}'.format(self.renter, self.rented_at)
 
 class MaintenanceReport(models.Model):
 	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='Bike that is the subject of this report')
