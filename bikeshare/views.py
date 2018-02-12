@@ -31,29 +31,7 @@ def api_view(*args, **kwargs):
 		return api_wrapper_func(exception_translator)
 	#end wrapper
 
-	return wrapper
-
-class DamageTypeList(generics.ListAPIView):
-	queryset = models.DamageType.objects.all()
-	serializer_class = serializers.DamageTypeSerializer
-
-class BikeRackList(generics.ListAPIView):
-	queryset = models.BikeRack.objects.all()
-	serializer_class = serializers.BikeRackSerializer
-
-class BikeList(generics.ListAPIView):
-	queryset = models.Bike.objects.all()
-	serializer_class = serializers.BikeSerializer
-
-class UserRentals(generics.ListAPIView):
-	serializer_class = serializers.RentalSerializer
-
-	def get_queryset(self):
-		return models.Rental.objects.filter(
-			renter=self.request.user,
-			returned_at=None
-		)
-
+	return wrapper	
 
 @csrf_exempt
 @api_view(['GET'])

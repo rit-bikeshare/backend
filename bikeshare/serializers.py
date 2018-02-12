@@ -2,6 +2,8 @@ from django.contrib.gis.geos import Point
 from rest_framework import serializers
 
 from . import models
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 
 class BikeRackSerializer(serializers.ModelSerializer):
 	bike_count = serializers.SerializerMethodField()
@@ -80,3 +82,18 @@ class ReportDamageRequestSerializer(serializers.Serializer):
 	damage_type = serializers.SlugField()
 	comments = serializers.CharField()
 	critical = serializers.BooleanField()
+
+class UsersSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = get_user_model()
+		fields = ('id', 'last_login', 'username', 'first_name', 'last_name', 'is_active', 'is_staff', 'groups')
+
+class GroupSerializer(serializers.ModelSerializer):
+	permissions = serializers.SerializerMethodField()
+
+	class Meta:
+		model = Group
+		fields = '__all__'
+	
+	def get_permissions(self, obj):
+		return obj.permissions.values_list('name', flat=True)
