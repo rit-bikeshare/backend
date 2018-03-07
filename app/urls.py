@@ -13,11 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib.gis import admin
 
 # This should be changed if shib is used
-USE_SHIB = True
+USE_SHIB = getattr(settings, 'USE_SHIB', True)
 
 urlpatterns = [
     url(r'^', include('bikeshare.urls')),

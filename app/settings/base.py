@@ -141,9 +141,12 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'app.BikeshareUser'
-AUTHENTICATION_BACKENDS = (
-	'app.backends.BikeshareRemoteUserBackend',
-)
+AUTHENTICATION_BACKENDS = [
+	'app.backends.BikeshareShibBackend',
+	'app.backends.BikeshareDummyBackend',
+]
+
+USE_SHIB = True
 
 SHIB_USERNAME_ATTRIB_NAME = 'uid'
 SHIB_ATTRIBUTE_MAP = {

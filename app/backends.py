@@ -1,3 +1,5 @@
 from extended_permissions.backends import ExtendedModelBackend
+from shib_auth.backends import ShibbolethBackend
 
-class BikeshareRemoteUserBackend(ExtendedModelBackend): pass
+class BikeshareDummyBackend(ExtendedModelBackend): pass
+class BikeshareShibBackend(ExtendedModelBackend, ShibbolethBackend): pass
