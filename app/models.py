@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser, UserManager
-from extended_auth.models import ExtendedPermissionsMixin
+from extended_permissions.models import ExtendedPermissionsMixin
 
 class BikeshareUserManager(UserManager):
 	def create_superuser(self, username, email=None, password=None, **extra_fields):

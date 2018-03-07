@@ -36,7 +36,6 @@ def api_view(*args, **kwargs):
 
 	return wrapper	
 
-@csrf_exempt
 @api_view(['GET'])
 def get_status(request):
 	val = {}
@@ -47,9 +46,8 @@ def get_status(request):
 #end get_status
 get_status.disable_maint_check = True
 
-@csrf_exempt
 @api_view(['GET'])
-@permission_classes((permissions.IsAuthenticated,))
+@permission_classes((permissions.IsAuthenticated, ))
 def user_info(request):
 	user = request.user
 

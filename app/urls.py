@@ -16,7 +16,18 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib.gis import admin
 
+
 urlpatterns = [
     url(r'^', include('bikeshare.urls')),
     url(r'^admin/', admin.site.urls),
+]
+
+# This should be changed if shib is used
+# Not allowing creation or reset in case this somehow goes live
+import django.contrib.auth.views as auth_views
+from django.shortcuts import render
+urlpatterns += [
+    url(r'^login/', auth_views.login),
+    url(r'^logout/', auth_views.logout),
+    url(r'^accounts/profile', lambda r: render(r, 'registration/success.html'))
 ]

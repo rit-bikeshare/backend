@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+{% block heading %}login page{% endblock %}
+{% block seewhat %}Shib's login prompt{% endblock %}
+{% block content %}
+<form method="post" style="display: inline-block;">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit">Login</button>
+</form>
+<p>(Note: You can change a user's password with the <code>manage.py changepassword &lt;username&gt;</code> command)</p>
+{% endblock %}

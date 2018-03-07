@@ -49,8 +49,6 @@ INSTALLED_APPS = [
 	'rest_framework',
 	'rest_framework_gis',
 	
-	'shib_auth',
-
 	'bikeshare'
 ]
 
@@ -61,13 +59,12 @@ MIDDLEWARE = [
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'shib_auth.middleware.ShibbolethRemoteUserMiddleware',
 	'bikeshare.middleware.MaintenanceInterceptorMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'app.urls'
 
 TEMPLATES = [
 	{
@@ -143,6 +140,7 @@ REST_FRAMEWORK = {
 	],
 }
 
+AUTH_USER_MODEL = 'app.BikeshareUser'
 AUTHENTICATION_BACKENDS = (
 	'app.backends.BikeshareRemoteUserBackend',
 )
@@ -161,7 +159,6 @@ SHIB_MOCK_ATTRIBUTES = {
 	'givenName': 'Testy'
 }
 
-AUTH_USER_MODEL = 'app.BikeshareUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
