@@ -1,3 +1,5 @@
+from functools import wraps
+
 from constance import config
 from django.contrib.auth.decorators import permission_required as __permission_required
 from django.db import transaction
@@ -24,6 +26,7 @@ def api_view(*args, **kwargs):
 	api_wrapper_func = __api_view(*args, **kwargs)
 
 	def wrapper(func):
+		@wraps(func)
 		def exception_translator(*f_args, **f_kwargs):
 			try: return func(*f_args, **f_kwargs)
 			except Http404 as e: raise NotFound(detail=str(e))
