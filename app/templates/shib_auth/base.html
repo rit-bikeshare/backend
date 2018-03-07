@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<title>{% block title %}{% endblock %}</title>
+		<style>
+		.errorlist {
+			color: red;
+		}
+		</style>
+	</head>
+	<body style="margin: auto; text-align:center;">
+		<h2>{% block heading %} {% endblock %} </h2>
+		<p>You're seeing this page because you visited a Shib endpoint directly.</p>
+		{% block content %}{% endblock %}
+		<br/>
+		<br/>
+		<p>Oh, here's a kitty to cheer you up:</p>
+		<img src="http://thecatapi.com/api/images/get?format=src&type=gif">
+	</body>
+</html>

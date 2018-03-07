@@ -16,18 +16,26 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib.gis import admin
 
+# This should be changed if shib is used
+USE_SHIB = True
 
 urlpatterns = [
     url(r'^', include('bikeshare.urls')),
     url(r'^admin/', admin.site.urls),
 ]
 
-# This should be changed if shib is used
-# Not allowing creation or reset in case this somehow goes live
-import django.contrib.auth.views as auth_views
-from django.shortcuts import render
-urlpatterns += [
-    url(r'^login/', auth_views.login),
-    url(r'^logout/', auth_views.logout),
-    url(r'^accounts/profile', lambda r: render(r, 'registration/success.html'))
-]
+if USE_SHIB:
+    import shib_auth.views as shib_views
+    urlpatterns += [
+        url(r'^login/', shib_views.LoginView.as_view()),
+        url(r'^logout/', shib_views.LogoutView.as_view()),
+    ]
+else:
+    # Not allowing creation or reset in case this somehow goes live
+    import django.contrib.auth.views as auth_views
+    from django.shortcuts import render
+    urlpatterns += [
+        url(r'^login/', auth_views.login),
+        url(r'^logout/', auth_views.logout),
+        url(r'^accounts/profile', lambda r: render(r, 'registration/success.html'))
+    ]
