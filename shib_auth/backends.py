@@ -20,10 +20,13 @@ class ShibbolethBackend(RemoteUserBackend):
 			model_field_dict = dict([(x, shib_meta[x]) for x in shib_meta if x in model_field_names])
 			user, created = UserModel.objects.get_or_create(**usernameDict, defaults=model_field_dict)
 			if created: self.configure_user(user, shib_meta=shib_meta)
+			user.save()
 		else:
 			try: user = User.objects.get(**usernameDict)
 			except UserModel.DoesNotExist: return # Bail out if we can't find the user
 		#endif
+
+		# TODO: Update groups
 
 		return user if self.user_can_authenticate(user) else None
 	

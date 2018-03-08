@@ -2,7 +2,7 @@ from django.conf import settings
 
 #At a minimum you will need username
 default_shib_attributes = {
-  "REMOTE_USER": (True, "username"),
+	"REMOTE_USER": (True, "username"),
 } 
 
 SHIB_ATTRIBUTE_MAP = getattr(settings, 'SHIB_ATTRIBUTE_MAP', default_shib_attributes)
@@ -12,3 +12,15 @@ SHIB_USERNAME_ATTRIB_NAME = getattr(settings, 'SHIB_USERNAME_ATTRIB_NAME', 'REMO
 # Set to true if you are testing and want to insert sample headers.
 SHIB_MOCK = getattr(settings, 'SHIB_MOCK', False)
 SHIB_MOCK_ATTRIBUTES = getattr(settings, 'SHIB_MOCK_ATTRIBUTES')
+
+# This list of attributes will map to Django permission groups
+SHIB_GROUP_ATTRIBUTES = getattr(settings, 'SHIB_GROUP_ATTRIBUTES', {})
+# sample_groups = {
+# 	'AFFILIATION': {
+# 		'delimiters': [';'],
+# 		'mappings': {
+# 			'STUDENT': 'Student',
+# 			'STAFF': 'Maintenance'
+# 		}
+# 	}
+# }

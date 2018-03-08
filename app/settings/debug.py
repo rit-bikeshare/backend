@@ -8,10 +8,5 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 SHIB_MOCK = True
-SHIB_MOCK_ATTRIBUTES = {
-	'uid': 'test',
-	'sn' : 'McTestface',
-	'givenName': 'Testy'
-}
 
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')

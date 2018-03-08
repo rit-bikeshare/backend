@@ -155,11 +155,20 @@ SHIB_ATTRIBUTE_MAP = {
 	"givenName": (False, "first_name")
 }
 
+SHIB_GROUP_ATTRIBUTES = {
+	'AFFILIATION': {
+		'mappings': {
+			'Student' : 'Student'
+		}
+	}
+}
+
 SHIB_MOCK = False
 SHIB_MOCK_ATTRIBUTES = {
 	'uid': 'test',
 	'sn' : 'McTestface',
-	'givenName': 'Testy'
+	'givenName': 'Testy',
+	'AFFILIATION': 'Student;StudentWorker'
 }
 
 

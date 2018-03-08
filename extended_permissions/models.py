@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.contrib.auth.models import Permission, Group, PermissionsMixin, User
+from django.contrib.auth.models import Permission
 from django.db import models
 
 class ExtendedPermissionsMixin(models.Model):

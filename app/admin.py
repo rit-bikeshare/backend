@@ -4,9 +4,12 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 from . import models, forms
 
+from extended_permissions.admin import ExtendedUserAdminMixin
+from shib_auth.admin import ShibIgnoredGroupsAdminMixin
 
+ 
 @admin.register(models.BikeshareUser)
-class BikeshareUserAdmin(UserAdmin):
+class BikeshareUserAdmin(ExtendedUserAdminMixin, ShibIgnoredGroupsAdminMixin, UserAdmin):
 	form = forms.UserChangeForm
 	add_form = forms.UserCreationForm
 
@@ -16,15 +19,6 @@ class BikeshareUserAdmin(UserAdmin):
             'fields': ('username',),
         }),
     )
-
-	fieldsets = (
-		(None, {'fields': ('username',)}),
-		(_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-									   'groups', 'user_permissions', 'user_denied_permissions')}),
-		(_('Important dates'), {'fields': ('last_login',)}),
-	)
-	
-	filter_horizontal = ('groups', 'user_permissions', 'user_denied_permissions')
 
 	def get_urls(self):
 		return super().get_urls()[1:] # cut off the change password view

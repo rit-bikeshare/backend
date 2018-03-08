@@ -1,9 +1,17 @@
 from functools import wraps
+import re
 
 from django.conf import settings
 from django.contrib import auth
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
-from .app_settings import SHIB_ATTRIBUTE_MAP, SHIB_MOCK, SHIB_MOCK_ATTRIBUTES, SHIB_USERNAME_ATTRIB_NAME
+
+from .app_settings import (
+	SHIB_ATTRIBUTE_MAP,
+	SHIB_MOCK,
+	SHIB_MOCK_ATTRIBUTES,
+	SHIB_USERNAME_ATTRIB_NAME,
+	SHIB_GROUP_ATTRIBUTES,
+)
 
 def EnsureAuthMiddleware(request):
 	# AuthenticationMiddleware is required so that request.user exists.
@@ -45,6 +53,7 @@ class ShibAuthCore:
 		# Update its attributes with our shib meta to capture
 		# any values that aren't on our model
 		request.user.__dict__.update(shib_meta)
+		self._adjust_groups(request, request.user)
 		request.user.save()
 
 	def _fetch_headers(self, request):
@@ -63,9 +72,26 @@ class ShibAuthCore:
 		if len(missing) != 0: raise ShibbolethValidationError("All required Shibboleth elements not found. Missing: %s" % missing)
 		
 		return username, shib_meta
+
+	def _adjust_groups(self, request, user):
+		ignored_groups = getattr(user, 'shib_ignored_groups', None)
+		if ignored_groups:
+			ignored_groups = ignored_groups.all().values_list('name', flat=True)
+		else:
+			ignored_groups = []
+
+		groups = [g for g in self.parse_group_attributes(request) if g not in ignored_groups]
+
+		# Remove the user from all groups that are not specified in the shibboleth metadata
+		for group in user.groups.all():
+			if group.name not in groups and group.name not in ignored_groups:
+				group.user_set.remove(user)
+		# Add the user to all groups in the shibboleth metadata
+		for g in groups:
+			group, created = auth.models.Group.objects.get_or_create(name=g)
+			group.user_set.add(user)
 	
-	@staticmethod
-	def parse_attributes(request):
+	def parse_attributes(self, request):
 		"""
 		Parse the incoming Shibboleth attributes and convert them to the internal data structure.
 		From: https://github.com/russell/django-shibboleth/blob/master/django_shibboleth/utils.py
@@ -76,7 +102,7 @@ class ShibAuthCore:
 		missing = []
 		
 		meta = request.META
-		for header, attr in list(SHIB_ATTRIBUTE_MAP.items()):
+		for header, attr in SHIB_ATTRIBUTE_MAP.items():
 			required, name = attr
 			value = meta.get(header, None)
 			if required and (not value or value == ''):
@@ -85,3 +111,19 @@ class ShibAuthCore:
 				shib_attrs[name] = value
 
 		return shib_attrs, missing
+	
+	def parse_group_attributes(self, request):
+		"""
+		Parse the Shibboleth attributes for the SHIB_GROUP_ATTRIBUTES and generate a list of them.
+		"""
+		groups = set()
+
+		for attr, attr_config in SHIB_GROUP_ATTRIBUTES.items():
+			delimiters = '|'.join(attr_config.get('delimiters', [';']))
+			mappings = attr_config['mappings']
+
+			parsed_groups = (g for g in re.split(delimiters, request.META.get(attr, '')) if g in mappings)
+			django_groups = (mappings[g] for g in parsed_groups)
+
+			groups = groups.union(django_groups)
+		return groups
