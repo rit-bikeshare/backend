@@ -44,7 +44,7 @@ def get_status(request):
 	
 	return Response(val, status=status.HTTP_200_OK)
 #end get_status
-get_status.disable_maint_check = True
+get_status.disable_maintenance_check = True
 
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, ))
@@ -149,7 +149,7 @@ def check_in(request):
 	#end transaction
 
 	return Response(serializers.RentalSerializer(rental).data, status=status.HTTP_200_OK)
-#end checkin	
+#end check_in	
 
 @csrf_exempt
 @api_view(['POST'])

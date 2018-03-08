@@ -3,11 +3,11 @@ from rest_framework import routers
 from . import views, viewsets
 
 router = routers.SimpleRouter()
-router.register(r'damage-types', viewsets.DamageTypeViewSet)
-router.register(r'bike-racks', viewsets.BikeRackViewSet)
-router.register(r'bikes', viewsets.BikeViewSet)
-router.register(r'groups', viewsets.GroupsViewSet)
-router.register(r'users', viewsets.UsersViewSet)
+router.register('damage-types', viewsets.DamageTypeViewSet)
+router.register('bike-racks', viewsets.BikeRackViewSet)
+router.register('bikes', viewsets.BikeViewSet)
+router.register('groups', viewsets.GroupsViewSet)
+router.register('users', viewsets.UsersViewSet)
 
 userRouter = routers.SimpleRouter()
 userRouter.register('rentals', viewsets.UserRentalsViewSet, base_name='user_rentals')
@@ -20,7 +20,7 @@ userUrls += userRouter.urls
 urlpatterns = [
 	url('^can-checkout/$', views.can_checkout),
 	url('^checkout/$', views.checkout),
-	url('^checkin/$', views.check_in),
+	url('^check-in/$', views.check_in),
 	url('^report-damage/$', views.report_damage),
 	url('^status/$', views.get_status),
 	url('^user/', include(userUrls)),
