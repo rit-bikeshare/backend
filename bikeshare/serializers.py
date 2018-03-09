@@ -24,10 +24,15 @@ class BikeRackSerializer(serializers.ModelSerializer):
 			location__within=obj.check_in_area
 		).count()
 
+class BikeLockSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.BikeLock
+		fields = '__all__'
 
 class BikeSerializer(serializers.ModelSerializer):
 	lat = serializers.SerializerMethodField()
 	lon = serializers.SerializerMethodField()
+	lock = BikeLockSerializer(read_only=True)
 
 	class Meta:
 		model = models.Bike

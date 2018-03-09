@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "39974f41757187370cf78d1ee3a6dc32fd8888bfaa444e94f0211e4e50edd2d1"
+            "sha256": "5e4d6286ea30fb59511d1edf5834c12db24f697229a0a2c2cb425f7a136622d8"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -43,6 +43,13 @@
             ],
             "version": "==2.1.0"
         },
+        "django-macaddress": {
+            "hashes": [
+                "sha256:9a56eed6d103654935fbb5e118e3e1b1461f1bed87f9b2a995656c39c5024cb7",
+                "sha256:be4530043cd05fda5116db2199cd1fbf27389d410e2260a7c39049ab9ac178ff"
+            ],
+            "version": "==1.4.1"
+        },
         "django-modeladmin-reorder": {
             "hashes": [
                 "sha256:b59a536bb1f87f350c0217610396908cf82930dc60b4593f46892250961c56cf"
@@ -75,6 +82,13 @@
                 "sha256:80f5e024079f23421c7a34123eb0f50e8a324a61fc1366ed0173aa1a89d766a7"
             ],
             "version": "==0.12"
+        },
+        "netaddr": {
+            "hashes": [
+                "sha256:56b3558bd71f3f6999e4c52e349f38660e54a7a8a9943335f73dfc96883e08ca",
+                "sha256:38aeec7cdd035081d3a4c306394b19d677623bf76fa0913f6695127c7753aefd"
+            ],
+            "version": "==0.7.19"
         },
         "pytz": {
             "hashes": [

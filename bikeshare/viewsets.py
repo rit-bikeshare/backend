@@ -27,7 +27,12 @@ class DamageTypeViewSet(viewsets.ModelViewSet):
 class BikeRackViewSet(viewsets.ModelViewSet):
 	queryset = models.BikeRack.objects.all()
 	serializer_class = serializers.BikeRackSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)	
+	permission_classes = (permissions.DjangoModelPermissions,)
+
+class BikeLockViewSet(viewsets.ModelViewSet):
+	queryset = models.BikeLock.objects.all()
+	serializer_class = serializers.BikeLockSerializer
+	permission_classes = (permissions.DjangoModelPermissions,)
 
 class BikeViewSet(viewsets.ModelViewSet):
 	queryset = models.Bike.objects.all()

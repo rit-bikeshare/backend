@@ -38,6 +38,10 @@ class BikeRackAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 		})
 	)
 
+@admin.register(models.BikeLock)
+class BikeLockAdmin(admin.ModelAdmin):
+	pass
+
 @admin.register(models.Rental)
 class RentalAdmin(admin.ModelAdmin):
 	# Controls the summary view
@@ -76,7 +80,7 @@ class BikeAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 	# Controls the add/change pages
 	fieldsets = (
 		('General', {
-			'fields': ('visible', 'location') 
+			'fields': ('visible', 'location', 'lock') 
 		}),
 		('Advanced', {
 			'fields': ('id', 'current_rental')

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils import timezone
 from datetime import timedelta
+from macaddress.fields import MACAddressField 
 
 class BikeRack(models.Model):
 	id = models.SlugField(primary_key=True, help_text='The ID for this bike rack. This should match the QR code on the rack')	
@@ -14,6 +15,11 @@ class BikeRack(models.Model):
 		return self.name
 	#enddef
 
+class BikeLock(models.Model):
+	mac = MACAddressField(primary_key=True, help_text='MAC Address of the lock')
+
+	def __str__(self):
+		return str(self.mac)
 
 class Bike(models.Model):
 	def _get_next_id():
@@ -24,7 +30,7 @@ class Bike(models.Model):
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
 	location = models.PointField(help_text='Location of the bike')
 	current_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The current rental for this bike', related_name='current_rental')
-
+	lock = models.ForeignKey(BikeLock, on_delete=models.PROTECT, blank=True, default=None, null=True, help_text='Lock for the bike')
 
 	class Meta:
 		permissions = (

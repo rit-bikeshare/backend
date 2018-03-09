@@ -18,6 +18,7 @@ djangorestframework = "*"
 django-constance = {extras = ["database"]}
 djangorestframework-camel-case = "*"
 djangorestframework-gis = "*"
+django-macaddress = "*"
 
 
 [dev-packages]
