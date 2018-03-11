@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from extended_permissions.models import ExtendedPermissionsMixin
-from shib_auth.models import ShibIgnoredGroupsMixin
+from django_shib_auth.models import ShibIgnoredGroupsMixin
 
 class BikeshareUserManager(UserManager):
 	def create_superuser(self, username, email=None, password=None, **extra_fields):

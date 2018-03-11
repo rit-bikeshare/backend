@@ -5,7 +5,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from . import models, forms
 
 from extended_permissions.admin import ExtendedUserAdminMixin
-from shib_auth.admin import ShibIgnoredGroupsAdminMixin
+from django_shib_auth.admin import ShibIgnoredGroupsAdminMixin
 
  
 @admin.register(models.BikeshareUser)

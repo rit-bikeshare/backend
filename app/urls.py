@@ -26,7 +26,7 @@ urlpatterns = [
 ]
 
 if USE_SHIB:
-    import shib_auth.views as shib_views
+    import django_shib_auth.views as shib_views
     urlpatterns += [
         url(r'^login/', shib_views.LoginView.as_view()),
         url(r'^logout/', shib_views.LogoutView.as_view()),

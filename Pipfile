@@ -19,6 +19,7 @@ django-constance = {extras = ["database"]}
 djangorestframework-camel-case = "*"
 djangorestframework-gis = "*"
 django-macaddress = "*"
+django-shib-auth = {git = "https://github.com/ritstudentgovernment/django-shib-auth.git"}
 
 
 [dev-packages]

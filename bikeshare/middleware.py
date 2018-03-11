@@ -12,7 +12,7 @@ class MaintenanceInterceptorMiddleware():
 	#enddef
 
 	def process_view(self, request, view_func, view_args, view_kwargs):
-		if getattr(view_func, 'disable_maint_check', False): return None
+		if getattr(view_func, 'disable_maintenance_check', False): return None
 		if request.user.is_staff: return None # staff can access
 		if not config.MAINTENANCE_MODE: return None
 

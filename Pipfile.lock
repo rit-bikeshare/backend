@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5e4d6286ea30fb59511d1edf5834c12db24f697229a0a2c2cb425f7a136622d8"
+            "sha256": "476e5a9a1809725ae722ccd2181d288c9ee88b2c38f9e5b0c83dd8fbb892f195"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.4.0-112-generic",
+            "platform_release": "4.4.0-116-generic",
             "platform_system": "Linux",
-            "platform_version": "#135-Ubuntu SMP Fri Jan 19 11:48:36 UTC 2018",
+            "platform_version": "#140-Ubuntu SMP Mon Feb 12 21:23:04 UTC 2018",
             "python_full_version": "3.5.2",
             "python_version": "3.5",
             "sys_platform": "linux"
@@ -62,6 +62,9 @@
                 "sha256:61e3ba7f6df82d8df9e6be3a8c55ef589eb3bf926c3d25d2b7949b07eae78354"
             ],
             "version": "==1.0.0"
+        },
+        "django-shib-auth": {
+            "git": "https://github.com/ritstudentgovernment/django-shib-auth.git"
         },
         "djangorestframework": {
             "hashes": [
