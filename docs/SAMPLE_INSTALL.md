@@ -205,7 +205,7 @@ To get started with Shib/nginx, follow the docs located [here](https://github.co
 
 When all is said and done, your nginx config should resemble this:
 
-```
+```nginx
 upstream django {
     server unix:///home/bikeshare-backend/backend/uwsgi.sock;
 }
@@ -239,7 +239,7 @@ server {
     location /api/login/ {
          shib_request /shibauthorizer;
 
-		 include shib_uwsgi_params;
+         include shib_uwsgi_params;
         
          shib_request_set $shib_uid $upstream_http_variable_uid;
          shib_request_set $shib_sn $upstream_http_variable_sn;
