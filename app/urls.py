@@ -40,3 +40,7 @@ else:
         url(r'^logout/', auth_views.logout),
         url(r'^accounts/profile', lambda r: render(r, 'registration/success.html'))
     ]
+
+urlpatterns = [
+    url(r'^api/', include(urlpatterns))
+]
