@@ -185,7 +185,7 @@ server {
 
     # Serve static files using nginx
     location /api/static/ {
-        alias /home/bikeshare-backend/backend/static;
+        alias /home/bikeshare-backend/backend/static/;
     }
 
     # Everything else gets passed through to Django
@@ -233,7 +233,7 @@ server {
     }
 
     location /api/static/ {
-        alias /home/bikeshare-backend/backend/static;
+        alias /home/bikeshare-backend/backend/static/;
     }
 
     location /api/login/ {
