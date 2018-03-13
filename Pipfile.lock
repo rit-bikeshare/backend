@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "476e5a9a1809725ae722ccd2181d288c9ee88b2c38f9e5b0c83dd8fbb892f195"
+            "sha256": "42dbb65d42082cdb932788360e5278ffbc3adf67c1870b9c33dcdc7b405fe731"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -62,6 +62,13 @@
                 "sha256:61e3ba7f6df82d8df9e6be3a8c55ef589eb3bf926c3d25d2b7949b07eae78354"
             ],
             "version": "==1.0.0"
+        },
+        "django-polymorphic": {
+            "hashes": [
+                "sha256:317bde04d5b218fa1ad07734dfbbbd3947c9495650ba7e015c5d4f6def00c879",
+                "sha256:e1821d7b5874509a158a0f22bebf544330e0944c481c5a3e6da6cac8887e4e88"
+            ],
+            "version": "==2.0.2"
         },
         "django-shib-auth": {
             "git": "https://github.com/ritstudentgovernment/django-shib-auth.git"

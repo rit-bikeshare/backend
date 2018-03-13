@@ -20,6 +20,7 @@ djangorestframework-camel-case = "*"
 djangorestframework-gis = "*"
 django-macaddress = "*"
 django-shib-auth = {git = "https://github.com/ritstudentgovernment/django-shib-auth.git"}
+django-polymorphic = "*"
 
 
 [dev-packages]

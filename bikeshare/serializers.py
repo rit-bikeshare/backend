@@ -25,9 +25,13 @@ class BikeRackSerializer(serializers.ModelSerializer):
 		).count()
 
 class BikeLockSerializer(serializers.ModelSerializer):
+	type_id = serializers.SerializerMethodField()
+
 	class Meta:
 		model = models.BikeLock
-		fields = '__all__'
+		fields = ('id', 'type_id')
+
+	def get_type_id(self, obj): return obj.type_id
 
 class BikeSerializer(serializers.ModelSerializer):
 	lat = serializers.SerializerMethodField()

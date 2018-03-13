@@ -2,11 +2,13 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils import timezone
 from datetime import timedelta
-from macaddress.fields import MACAddressField 
+from macaddress.fields import MACAddressField
+from polymorphic.models import PolymorphicModel
+from django.contrib.contenttypes.models import ContentType
 
 class BikeRack(models.Model):
 	id = models.SlugField(primary_key=True, help_text='The ID for this bike rack. This should match the QR code on the rack')	
-	name = models.CharField(max_length=50, blank=False, unique=True, help_text='Friendly name of the bike rack such as "Grace Watson Rack"')
+	name = models.CharField(max_length=50, blank=False, unique=True, help_text='verbose name of the bike rack such as "Grace Watson Rack"')
 	description = models.CharField(max_length=255, blank=False, help_text='Description of where the rack is located')
 	location = models.PointField(help_text='Location of the bike rack')
 	check_in_area = models.PolygonField(help_text='Area where bikes can be "check in" to this bike rack')
@@ -15,11 +17,69 @@ class BikeRack(models.Model):
 		return self.name
 	#enddef
 
-class BikeLock(models.Model):
+class BluetoothLock(models.Model):
 	mac = MACAddressField(primary_key=True, help_text='MAC Address of the lock')
+	class Meta:
+		abstract = True
+
+class BikeLock(PolymorphicModel):
+	id = models.CharField(primary_key=True, max_length=10)
+
+	def lock(self, request):
+		raise NotImplementedError()
+	
+	def unlock(self, request):
+		raise NotImplementedError()
+
+	@property
+	def type_id(self):
+		# Look up the type name defined by the class
+		if isinstance(self, type):
+			# This happens if type_id is called on an object
+			# That doesn't define type_id itself, so we'll end up back in here
+			raise AttributeError('{} does not define a class-level `type_id` attribute'.format(type(self)))
+		return self.get_real_instance_class().type_id
+
+	@property
+	def verbose_name(self):
+		# Look up the verbose name defined by the class
+		return self.get_real_instance_class()._meta.verbose_name
 
 	def __str__(self):
-		return str(self.mac)
+		return str(self.id)
+
+class KeyLock(BikeLock):
+	type_id = 'key'
+
+	key_number = models.CharField(max_length=10, unique=True)
+
+	def lock(self, request):
+		pass
+	
+	def unlock(self, request):
+		pass
+
+class CombinationLock(BikeLock):
+	type_id = 'combination'
+
+	combination = models.CharField(max_length=10)
+
+	def unlock(self, request):
+		return str(self.combination)
+
+	def lock(self, request):
+		pass
+
+class LinkaLock(BluetoothLock, BikeLock):
+	type_id = 'linka'
+	class Meta:
+		verbose_name = 'Linka lock'
+
+	def unlock(self, request):
+		pass
+
+	def lock(self, request):
+		pass
 
 class Bike(models.Model):
 	def _get_next_id():
@@ -106,7 +166,7 @@ class MaintenanceReport(models.Model):
 
 class DamageType(models.Model):
 	id = models.SlugField(primary_key=True, help_text='The ID for this damage type')
-	name = models.CharField(max_length=50, help_text='Friendly name of this damage, such as "Flat tire"')
+	name = models.CharField(max_length=50, help_text='verbose name of this damage, such as "Flat tire"')
 	description = models.CharField(max_length=255, help_text='Description of what this damage type means')
 	force_critical = models.BooleanField(help_text='Should this damage type always be critical?')
 

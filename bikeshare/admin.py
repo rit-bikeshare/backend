@@ -2,6 +2,7 @@ from constance import config
 from django import forms
 from django.contrib.gis import admin
 from django.contrib.gis.geos import Point
+from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin, PolymorphicChildModelFilter
 
 from . import models
 
@@ -39,7 +40,39 @@ class BikeRackAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 	)
 
 @admin.register(models.BikeLock)
-class BikeLockAdmin(admin.ModelAdmin):
+class BikeLockAdmin(PolymorphicParentModelAdmin):
+	list_filter = (PolymorphicChildModelFilter,)
+	list_display = ('id', 'type_id')
+	search_fields = ('id',)
+	ordering = ('id',)
+
+	def get_child_models(self):
+		subclasses = set()
+		work = [models.BikeLock]
+		while work:
+			parent = work.pop()
+			for child in parent.__subclasses__():
+				if child not in subclasses and admin.site.is_registered(child):
+					subclasses.add(child)
+					work.append(child)
+		return list(subclasses)
+
+class LockAdminBase(PolymorphicChildModelAdmin):
+	def get_readonly_fields(self, request, obj=None):
+		ro = super().get_readonly_fields(request, obj)
+		if obj is not None: ro += ('id',)
+		return ro
+
+@admin.register(models.CombinationLock)
+class CombinationLockAdmin(LockAdminBase):
+	pass
+
+@admin.register(models.KeyLock)
+class KeyLockAdmin(LockAdminBase):
+	pass
+
+@admin.register(models.LinkaLock)
+class LinkaLockAdmin(LockAdminBase):
 	pass
 
 @admin.register(models.Rental)
