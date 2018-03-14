@@ -4,6 +4,7 @@ from rest_framework import serializers
 from . import models
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 
 class BikeRackSerializer(serializers.ModelSerializer):
 	bike_count = serializers.SerializerMethodField()
@@ -23,6 +24,11 @@ class BikeRackSerializer(serializers.ModelSerializer):
 		return rentable_bikes.filter(
 			location__within=obj.check_in_area
 		).count()
+
+class BikeLockTypeSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ContentType
+		fields = ('id', 'name')
 
 class BikeLockSerializer(serializers.ModelSerializer):
 	type_id = serializers.SerializerMethodField()

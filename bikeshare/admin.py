@@ -42,7 +42,7 @@ class BikeRackAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 @admin.register(models.BikeLock)
 class BikeLockAdmin(PolymorphicParentModelAdmin):
 	list_filter = (PolymorphicChildModelFilter,)
-	list_display = ('id', 'type_id')
+	list_display = ('id', 'type')
 	search_fields = ('id',)
 	ordering = ('id',)
 
@@ -52,7 +52,7 @@ class BikeLockAdmin(PolymorphicParentModelAdmin):
 		while work:
 			parent = work.pop()
 			for child in parent.__subclasses__():
-				if child not in subclasses and admin.site.is_registered(child):
+				if admin.site.is_registered(child):
 					subclasses.add(child)
 					work.append(child)
 		return list(subclasses)

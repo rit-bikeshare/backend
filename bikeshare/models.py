@@ -33,12 +33,12 @@ class BikeLock(PolymorphicModel):
 
 	@property
 	def type_id(self):
-		# Look up the type name defined by the class
-		if isinstance(self, type):
-			# This happens if type_id is called on an object
-			# That doesn't define type_id itself, so we'll end up back in here
-			raise AttributeError('{} does not define a class-level `type_id` attribute'.format(type(self)))
-		return self.get_real_instance_class().type_id
+		return self.polymorphic_ctype_id
+
+	@property
+	def type(self):
+		# Look up the content type defined by the class
+		return ContentType.objects.get_for_id(self.polymorphic_ctype_id)
 
 	@property
 	def verbose_name(self):
@@ -49,8 +49,6 @@ class BikeLock(PolymorphicModel):
 		return str(self.id)
 
 class KeyLock(BikeLock):
-	type_id = 'key'
-
 	key_number = models.CharField(max_length=10, unique=True)
 
 	def lock(self, request):
@@ -60,8 +58,6 @@ class KeyLock(BikeLock):
 		pass
 
 class CombinationLock(BikeLock):
-	type_id = 'combination'
-
 	combination = models.CharField(max_length=10)
 
 	def unlock(self, request):
@@ -71,7 +67,6 @@ class CombinationLock(BikeLock):
 		pass
 
 class LinkaLock(BluetoothLock, BikeLock):
-	type_id = 'linka'
 	class Meta:
 		verbose_name = 'Linka lock'
 

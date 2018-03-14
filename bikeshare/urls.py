@@ -25,6 +25,7 @@ urlpatterns = [
 	url('^check-in/$', views.check_in),
 	url('^report-damage/$', views.report_damage),
 	url('^status/$', views.get_status),
+	url('^lock-types/$', views.get_lock_types),
 	url('^user/', include(userUrls)),
 ]
 
