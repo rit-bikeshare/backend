@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils import timezone
 from datetime import timedelta
-from macaddress.fields import MACAddressField
 from polymorphic.models import PolymorphicModel
 from django.contrib.contenttypes.models import ContentType
 
@@ -16,11 +15,6 @@ class BikeRack(models.Model):
 	def __str__(self):
 		return self.name
 	#enddef
-
-class BluetoothLock(models.Model):
-	mac = MACAddressField(primary_key=True, help_text='MAC Address of the lock')
-	class Meta:
-		abstract = True
 
 class BikeLock(PolymorphicModel):
 	id = models.CharField(primary_key=True, max_length=10)
@@ -46,35 +40,7 @@ class BikeLock(PolymorphicModel):
 		return self.get_real_instance_class()._meta.verbose_name
 
 	def __str__(self):
-		return str(self.id)
-
-class KeyLock(BikeLock):
-	key_number = models.CharField(max_length=10, unique=True)
-
-	def lock(self, request):
-		pass
-	
-	def unlock(self, request):
-		pass
-
-class CombinationLock(BikeLock):
-	combination = models.CharField(max_length=10)
-
-	def unlock(self, request):
-		return str(self.combination)
-
-	def lock(self, request):
-		pass
-
-class LinkaLock(BluetoothLock, BikeLock):
-	class Meta:
-		verbose_name = 'Linka lock'
-
-	def unlock(self, request):
-		pass
-
-	def lock(self, request):
-		pass
+		return '{} ({})'.format(self.id, self.verbose_name)
 
 class Bike(models.Model):
 	def _get_next_id():
@@ -85,7 +51,7 @@ class Bike(models.Model):
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
 	location = models.PointField(help_text='Location of the bike')
 	current_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The current rental for this bike', related_name='current_rental')
-	lock = models.ForeignKey(BikeLock, on_delete=models.PROTECT, blank=True, default=None, null=True, help_text='Lock for the bike')
+	lock = models.OneToOneField(BikeLock, on_delete=models.PROTECT, blank=True, default=None, null=True, help_text='Lock for the bike')
 
 	class Meta:
 		permissions = (

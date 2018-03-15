@@ -30,19 +30,53 @@ class BikeLockTypeSerializer(serializers.ModelSerializer):
 		model = ContentType
 		fields = ('id', 'name')
 
+from bikeshare.locks.type_manager import lock_manager
 class BikeLockSerializer(serializers.ModelSerializer):
-	type_id = serializers.SerializerMethodField()
-
 	class Meta:
 		model = models.BikeLock
-		fields = ('id', 'type_id')
+		fields = '__all__'
+	
+	def to_representation(self, obj):
+		serializer = lock_manager[obj].serializer
+		return serializer(obj, context=self.context).to_representation(obj)
 
-	def get_type_id(self, obj): return obj.type_id
+	def to_internal_value(self, data):
+		serializer = self._get_serializer(data)
+		return serializer(context=self.context).to_internal_value(data)
+
+	def create(self, validated_data):
+		serializer = self._get_serializer(self.initial_data)
+		return serializer(context=self.context).create(validated_data)
+
+	def update(self, validated_data, partial=True):
+		serializer = self._get_serializer(self.initial_data)
+		return serializer(context=self.context).update(validated_data, partial)
+
+	@staticmethod
+	def _get_serializer(type_id_or_dict):
+		"""
+		Helper for extracting the serializer we should use
+		"""
+		type_id = type_id_or_dict
+		if isinstance(type_id, dict):
+			try:
+				type_id = type_id_or_dict['type_id']
+			except KeyError:
+				raise serializers.ValidationError({
+					'type_id': 'This field is required',
+				})
+
+		try:
+			model = ContentType.objects.get_for_id(type_id).model_class()
+			return lock_manager[model].serializer
+		except (KeyError, ContentType.DoesNotExist):
+			raise serializers.ValidationError({
+				'type_id': 'Unknown type "{}"'.format(type_id),
+			})
 
 class BikeSerializer(serializers.ModelSerializer):
 	lat = serializers.SerializerMethodField()
 	lon = serializers.SerializerMethodField()
-	lock = BikeLockSerializer(read_only=True)
 
 	class Meta:
 		model = models.Bike
@@ -112,3 +146,5 @@ class GroupSerializer(serializers.ModelSerializer):
 	
 	def get_permissions(self, obj):
 		return obj.permissions.values_list('name', flat=True)
+
+from bikeshare.locks.serializers import *

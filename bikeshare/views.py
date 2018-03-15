@@ -175,25 +175,12 @@ def report_damage(request):
 	return Response(serializers.DamageReportSerializer(damage_report).data, status=status.HTTP_200_OK)
 #end report_damage
 
-def get_subclasses(cls):
-	subclasses = set()
-	work = [cls]
-	while work:
-		parent = work.pop()
-		for child in parent.__subclasses__():
-			subclasses.add(child)
-			work.append(child)
-	return subclasses
-
-lock_content_types = ContentType.objects.get_for_models(
-		* get_subclasses(models.BikeLock),
-		for_concrete_models = False
-	).values()
-
+from bikeshare.locks.type_manager import lock_manager
 @csrf_exempt
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))
 def get_lock_types(request):
+	lock_content_types = ContentType.objects.get_for_models(*lock_manager.subclasses, for_concrete_models=False)
 	return Response(serializers.BikeLockTypeSerializer(lock_content_types, many=True).data, status=status.HTTP_200_OK)
 #end get_lock_types
 

@@ -29,11 +29,6 @@ class BikeRackViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.BikeRackSerializer
 	permission_classes = (permissions.DjangoModelPermissions,)
 
-class BikeLockViewSet(viewsets.ModelViewSet):
-	queryset = models.BikeLock.objects.all()
-	serializer_class = serializers.BikeLockSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)
-
 class BikeViewSet(viewsets.ModelViewSet):
 	queryset = models.Bike.objects.all()
 	serializer_class = serializers.BikeSerializer
@@ -58,3 +53,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 	queryset = get_user_model().objects.all()
 	permission_classes = (RestrictedViewDjangoModelPermissions,)	
 	
+class BikeLockViewSet(viewsets.ModelViewSet):
+	serializer_class = serializers.BikeLockSerializer
+	queryset = models.BikeLock.objects.all()
+	permission_classes = (RestrictedViewDjangoModelPermissions,)

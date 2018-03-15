@@ -39,6 +39,8 @@ class BikeRackAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 		})
 	)
 
+from bikeshare.locks.type_manager import lock_manager
+
 @admin.register(models.BikeLock)
 class BikeLockAdmin(PolymorphicParentModelAdmin):
 	list_filter = (PolymorphicChildModelFilter,)
@@ -47,15 +49,7 @@ class BikeLockAdmin(PolymorphicParentModelAdmin):
 	ordering = ('id',)
 
 	def get_child_models(self):
-		subclasses = set()
-		work = [models.BikeLock]
-		while work:
-			parent = work.pop()
-			for child in parent.__subclasses__():
-				if admin.site.is_registered(child):
-					subclasses.add(child)
-					work.append(child)
-		return list(subclasses)
+		return lock_manager.subclass_list
 
 class LockAdminBase(PolymorphicChildModelAdmin):
 	def get_readonly_fields(self, request, obj=None):
@@ -63,15 +57,16 @@ class LockAdminBase(PolymorphicChildModelAdmin):
 		if obj is not None: ro += ('id',)
 		return ro
 
-@admin.register(models.CombinationLock)
+import bikeshare.locks.models as lock_models
+@admin.register(lock_models.CombinationLock)
 class CombinationLockAdmin(LockAdminBase):
 	pass
 
-@admin.register(models.KeyLock)
+@admin.register(lock_models.KeyLock)
 class KeyLockAdmin(LockAdminBase):
 	pass
 
-@admin.register(models.LinkaLock)
+@admin.register(lock_models.LinkaLock)
 class LinkaLockAdmin(LockAdminBase):
 	pass
 
