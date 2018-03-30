@@ -13,14 +13,14 @@ python_version = "3.5"
 [packages]
 
 django = "*"
-django-modeladmin-reorder = "*"
+"django-modeladmin-reorder" = "*"
 djangorestframework = "*"
-django-constance = {extras = ["database"]}
-djangorestframework-camel-case = "*"
-djangorestframework-gis = "*"
-django-macaddress = "*"
-django-shib-auth = {git = "https://github.com/ritstudentgovernment/django-shib-auth.git"}
+"django-constance" = {extras = ["database"]}
+"djangorestframework-camel-case" = "*"
+"djangorestframework-gis" = "*"
+"django-macaddress" = "*"
+"django-shib-auth" = {git = "https://github.com/ritstudentgovernment/django-shib-auth.git"}
+"djangorestframework-jwt" = "*"
 
 
 [dev-packages]
-

@@ -31,37 +31,27 @@ CSRF_COOKIE_AGE = None
 # Application definition
 
 INSTALLED_APPS = [
-	'app', # This goes first so the admin site is swapped out
-	
-	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'django.contrib.gis',
 
 	'constance', # DB-backed settings
 	'constance.backends.database',
 
-	'admin_reorder',
 	
 	'rest_framework',
 	'rest_framework_gis',
 	
+	'app',
 	'bikeshare'
 ]
 
 MIDDLEWARE = [
-	'admin_reorder.middleware.ModelAdminReorder',
 	'django.middleware.security.SecurityMiddleware',
-	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'app.middleware.JWTAuthenticationMiddleware',
 	'bikeshare.middleware.MaintenanceInterceptorMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware',
-	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -76,7 +66,6 @@ TEMPLATES = [
 				'django.template.context_processors.debug',
 				'django.template.context_processors.request',
 				'django.contrib.auth.context_processors.auth',
-				'django.contrib.messages.context_processors.messages',
 			],
 		},
 	},
@@ -84,12 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wsgi.application'
 
-ADMIN_REORDER = (
-	'bikeshare',
-	'constance',
-	# Cross-linked models
-	{'app': 'auth', 'models': ('auth.Group', 'app.BikeshareUser')},
-)
 
 # Setting editable through admin interface
 from collections import OrderedDict
@@ -129,7 +112,10 @@ if 'DATABASE_URL' in os.environ:
 		"import dj-database-url package. Did you remember to install it?")
 
 REST_FRAMEWORK = {
-	'DEFAULT_AUTHENTICATION_CLASSES': ('app.rest_auth.NoCsrfSessionAuthentication',),
+	'DEFAULT_AUTHENTICATION_CLASSES': (
+		# API only takes JSON tokens
+		'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+	),
 
 	'DEFAULT_RENDERER_CLASSES': [
 		'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
@@ -138,6 +124,11 @@ REST_FRAMEWORK = {
 	'DEFAULT_PARSER_CLASSES': [
 		'djangorestframework_camel_case.parser.CamelCaseJSONParser',
 	],
+}
+
+from datetime import timedelta
+JWT_AUTH = {
+	'JWT_EXPIRATION_DELTA': timedelta(hours=1)
 }
 
 AUTH_USER_MODEL = 'app.BikeshareUser'

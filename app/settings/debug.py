@@ -10,3 +10,6 @@ ALLOWED_HOSTS = ['*']
 SHIB_MOCK = True
 
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+
+from datetime import timedelta
+JWT_AUTH['JWT_EXPIRATION_DELTA'] = timedelta(days=365)
