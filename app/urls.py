@@ -36,7 +36,3 @@ else:
 		url(r'^login/', obtain_jwt_token),
         url(r'^logout/', lambda r: HttpResponse("{'success': true}")),
 	]
-
-urlpatterns = [
-	url(r'^api/', include(urlpatterns))
-]
