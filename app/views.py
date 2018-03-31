@@ -21,10 +21,7 @@ class JwtLoginView(ShibAuthCore, APIView):
 	Defines a view that will read shib headers and use them to create/log in a user.
 	This MUST be protected by Shib or anyone could spoof anything.
 	"""
-	def get(self, * args, ** kwargs):
-		return Response()
-
-	def post(self, request, *args, **kwargs):
+	def get(self, request, *args, **kwargs):
 		user = self.get_user(request)
 
 		jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -34,7 +31,7 @@ class JwtLoginView(ShibAuthCore, APIView):
 		token = jwt_encode_handler(payload)
 
 		if request.GET.get('expo', 'false') == 'true':
-			return redirect('https://auth.expo.io/@bikeshare/bikeshare/?token=' + urllib.parse.quote_plus(token))
+			return redirect('https://auth.expo.io/@bikeshare/bikeshare?token=' + urllib.parse.quote_plus(token))
 		
 		return Response({
 			'token': token
