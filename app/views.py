@@ -33,7 +33,7 @@ class JwtLoginView(ShibAuthCore, APIView):
 		payload = jwt_payload_handler(user)
 		token = jwt_encode_handler(payload)
 
-		if request.META.get('expo', 'false') == 'true':
+		if request.GET.get('expo', 'false') == 'true':
 			return redirect('https://auth.expo.io/@bikeshare/bikeshare/?token=' + urllib.parse.quote_plus(token))
 		
 		return Response({
