@@ -38,8 +38,3 @@ class DropAnywhereNotSupportedException(APIException):
 	status_code = status.HTTP_409_CONFLICT
 	default_detail = 'Drop anywhere is not supported.'
 	default_code = 'drop_anywhere_disabled'
-
-class DryRunSucceeded(APIException):
-	status_code = status.HTTP_200_OK
-	default_detail = 'Dry run succeeded'
-	default_code = 'dry_run_succeeded'

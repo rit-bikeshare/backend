@@ -5,6 +5,11 @@ from . import models
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 
+class UserInfoSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = get_user_model()
+		fields = ('last_login', 'username', 'first_name', 'last_name', 'groups')
+
 class BikeRackSerializer(serializers.ModelSerializer):
 	bike_count = serializers.SerializerMethodField()
 	lat = serializers.FloatField(write_only=True)

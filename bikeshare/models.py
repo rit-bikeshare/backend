@@ -2,7 +2,9 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils import timezone
 from datetime import timedelta
-from macaddress.fields import MACAddressField 
+from macaddress.fields import MACAddressField
+
+from constance import config
 
 class BikeRack(models.Model):
 	id = models.SlugField(primary_key=True, help_text='The ID for this bike rack. This should match the QR code on the rack')	
@@ -70,19 +72,8 @@ class Bike(models.Model):
 class Rental(models.Model):
 	renter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, help_text='User who rented the bike')
 	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was rented rented')
-	rented_at = models.DateTimeField(help_text='When the rental began')
-	should_return_at = models.DateTimeField(help_text='When the renter was supposed to return the bike by')
+	rented_at = models.DateTimeField(help_text='When the rental began', auto_now_add=True)
 	returned_at = models.DateTimeField(null=True, blank=True, help_text='When the bike was actually returned', db_index=True)
-
-	@classmethod
-	def get_rental_start(cls):
-		return timezone.now()
-	#enddef
-
-	@classmethod
-	def get_rental_end(cls, start, duration=timedelta(1)):
-		return start + duration
-	#enddef
 
 	def is_complete(self):
 		return self.returned_at is not None
@@ -91,7 +82,7 @@ class Rental(models.Model):
 
 	def is_late(self):
 		r_date = self.returned_at if self.is_complete() else timezone.now()
-		return r_date > self.should_return_at
+		return r_date > self.rented_at + config.RENTAL_LENGTH
 	#enddef
 	is_late.boolean = True
 

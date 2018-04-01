@@ -14,17 +14,17 @@ userRouter = routers.SimpleRouter()
 userRouter.register('rentals', viewsets.UserRentalsViewSet, base_name='user_rentals')
 
 userUrls = [
-	path('info/', views.user_info)
+	path('info/', views.UserInfoView)
 ]
 userUrls += userRouter.urls
 
 urlpatterns = [
-	path('can-checkout/', views.can_checkout),
-	path('checkout/', views.checkout),
-	path('checkin/', views.check_in),
-	path('check-in/', views.check_in),
-	path('report-damage/', views.report_damage),
-	path('status/', views.get_status),
+	path('can-checkout/', views.CheckoutView(True).as_view()),
+	path('checkout/', views.CheckoutView(False).as_view()),
+	path('checkin/', views.CheckInView().as_view()),
+	path('check-in/', views.CheckInView().as_view()),
+	path('report-damage/', views.ReportDamage().as_view()),
+	path('status/', views.StatusView().as_view()),
 	path('user/', include(userUrls)),
 ]
 
