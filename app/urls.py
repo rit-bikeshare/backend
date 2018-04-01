@@ -14,25 +14,25 @@ Including another URLconf
 	2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import path, include
 from django.contrib.gis import admin
 
 # This should be changed if shib is used
 USE_SHIB = getattr(settings, 'USE_SHIB', True)
 urlpatterns = [
-	url(r'^', include('bikeshare.urls')),
+	path('', include('bikeshare.urls')),
 ]
 
 if USE_SHIB:
 	from . import views
 	urlpatterns += [
-		url(r'^login/', views.JwtLoginView.as_view()),
-		url(r'^logout/', views.JwtLogoutView.as_view()),
+		path('login/', views.JwtLoginView.as_view()),
+		path('logout/', views.JwtLogoutView.as_view()),
 	]
 else:
 	from rest_framework_jwt.views import obtain_jwt_token
 	from django.http import HttpResponse
 	urlpatterns += [
-		url(r'^login/', obtain_jwt_token),
-        url(r'^logout/', lambda r: HttpResponse("{'success': true}")),
+		path('login/', obtain_jwt_token),
+        path('logout/', lambda r: HttpResponse("{'success': true}")),
 	]

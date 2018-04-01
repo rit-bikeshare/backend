@@ -30,7 +30,7 @@ class NotRentedException(APIException):
 	default_code = 'not_rented'
 
 class NotYourRentalException(APIException):
-	status_code = status.HTTP_403_FORBIDDEN
+	status_code = status.HTTP_409_CONFLICT
 	default_detail = "You don't have this bike rented!"
 	default_code = 'not_your_rental'
 

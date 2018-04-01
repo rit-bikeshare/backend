@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.urls import path, include
 from rest_framework import routers
 from . import views, viewsets
 
@@ -14,18 +14,18 @@ userRouter = routers.SimpleRouter()
 userRouter.register('rentals', viewsets.UserRentalsViewSet, base_name='user_rentals')
 
 userUrls = [
-	url('^info/$', views.user_info)
+	path('info/', views.user_info)
 ]
 userUrls += userRouter.urls
 
 urlpatterns = [
-	url('^can-checkout/$', views.can_checkout),
-	url('^checkout/$', views.checkout),
-	url('^checkin/$', views.check_in),
-	url('^check-in/$', views.check_in),
-	url('^report-damage/$', views.report_damage),
-	url('^status/$', views.get_status),
-	url('^user/', include(userUrls)),
+	path('can-checkout/', views.can_checkout),
+	path('checkout/', views.checkout),
+	path('checkin/', views.check_in),
+	path('check-in/', views.check_in),
+	path('report-damage/', views.report_damage),
+	path('status/', views.get_status),
+	path('user/', include(userUrls)),
 ]
 
 urlpatterns += router.urls
