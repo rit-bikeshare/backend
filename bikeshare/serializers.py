@@ -7,8 +7,8 @@ from django.contrib.auth import get_user_model
 
 class BikeRackSerializer(serializers.ModelSerializer):
 	bike_count = serializers.SerializerMethodField()
-	lat = serializers.SerializerMethodField()
-	lon = serializers.SerializerMethodField()
+	lat = serializers.FloatField(write_only=True)
+	lon = serializers.FloatField(write_only=True)
 
 	class Meta:
 		model = models.BikeRack
@@ -24,14 +24,28 @@ class BikeRackSerializer(serializers.ModelSerializer):
 			location__within=obj.check_in_area
 		).count()
 
+	def to_representation(self, obj):
+		ret = super().to_representation(obj)
+		ret['lat'] = obj.location.y
+		ret['lon'] = obj.location.x
+		return ret
+
+	def to_internal_value(self, data):
+		ret = super().to_internal_value(data)
+		ret['location'] = Point(ret['lon'], ret['lat'], srid=4326)
+		del ret['lon']
+		del ret['lat']
+		return ret
+		
+
 class BikeLockSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.BikeLock
 		fields = '__all__'
 
 class BikeSerializer(serializers.ModelSerializer):
-	lat = serializers.SerializerMethodField()
-	lon = serializers.SerializerMethodField()
+	lat = serializers.FloatField(write_only=True)
+	lon = serializers.FloatField(write_only=True)
 	lock = BikeLockSerializer(read_only=True)
 
 	class Meta:
@@ -40,6 +54,19 @@ class BikeSerializer(serializers.ModelSerializer):
 	
 	def get_lat(self, obj): return obj.location.y
 	def get_lon(self, obj): return obj.location.x
+
+	def to_representation(self, obj):
+		ret = super().to_representation(obj)
+		ret['lat'] = obj.location.y
+		ret['lon'] = obj.location.x
+		return ret
+
+	def to_internal_value(self, data):
+		ret = super().to_internal_value(data)
+		ret['location'] = Point(ret['lon'], ret['lat'], srid=4326)
+		del ret['lon']
+		del ret['lat']
+		return ret
 		
 class RentalSerializer(serializers.ModelSerializer):
 	class Meta:
