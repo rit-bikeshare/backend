@@ -50,12 +50,6 @@
             ],
             "version": "==1.4.1"
         },
-        "django-modeladmin-reorder": {
-            "hashes": [
-                "sha256:b59a536bb1f87f350c0217610396908cf82930dc60b4593f46892250961c56cf"
-            ],
-            "version": "==0.3"
-        },
         "django-picklefield": {
             "hashes": [
                 "sha256:57e4349c7f75eab08fe7ceb11e7135644fdf771e2777a754db4f07e5c63c191f",

@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.gis import admin
 from django.contrib.gis.geos import Point
 
+from django.utils.timezone import now
+
 from . import models
 
 class DynamicStartMixin(admin.OSMGeoAdmin):
@@ -45,7 +47,7 @@ class BikeLockAdmin(admin.ModelAdmin):
 @admin.register(models.Rental)
 class RentalAdmin(admin.ModelAdmin):
 	# Controls the summary view
-	list_display = ('id', 'renter', 'bike', 'rented_at', 'should_return_at', 'returned_at', 'is_complete', 'is_late')
+	list_display = ('id', 'renter', 'bike', 'rented_at', 'returned_at', 'is_complete', 'is_late')
 	search_fields = ('renter__username', 'bike__id')
 	ordering = ('rented_at',)
 
@@ -55,20 +57,9 @@ class RentalAdmin(admin.ModelAdmin):
 			'fields': ('renter', 'bike') 
 		}),
 		('Times', {
-			'fields': ('rented_at','should_return_at', 'returned_at')
+			'fields': ('rented_at', 'returned_at')
 		})
 	)
-
-	def get_changeform_initial_data(self, request):
-		d = super().get_changeform_initial_data(request)
-		start = models.Rental.get_rental_start()
-		end = models.Rental.get_rental_end(start)
-		d.update({
-			'rented_at': start,
-			'should_return_at': end
-		})
-
-		return d
 
 @admin.register(models.Bike)
 class BikeAdmin(DynamicStartMixin, admin.OSMGeoAdmin):

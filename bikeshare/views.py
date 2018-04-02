@@ -14,16 +14,14 @@ from rest_framework.response import Response
 
 from . import models, serializers, exceptions, permissions
 
-class Useful404Mixin:
+class Useful404Mixin():
 	"""
 	Mixin to provide more useful 404 errors. rest framework
 	subs in a very generic error message if it catches a 404
 	"""
-	def __init__(self, * args, ** kwargs):
-		super().__init__( * args, ** kwargs)
 	
 	def as_view(self, * args, ** kwargs):
-		view_func = super().__init__( * args, ** kwargs)
+		view_func = super().as_view( * args, ** kwargs)
 		
 		@wraps(view_func)
 		def exception_translator(*f_args, **f_kwargs):

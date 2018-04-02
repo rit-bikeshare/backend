@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
+import os, datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,6 +20,7 @@ SECRET_KEY = None
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+USE_ADMIN = False
 
 ALLOWED_HOSTS = []
 
@@ -31,6 +32,9 @@ CSRF_COOKIE_AGE = None
 # Application definition
 
 INSTALLED_APPS = [
+	'app',
+	'bikeshare',
+
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.staticfiles',
@@ -42,16 +46,13 @@ INSTALLED_APPS = [
 	
 	'rest_framework',
 	'rest_framework_gis',
-	
-	'app',
-	'bikeshare'
 ]
 
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'app.middleware.JWTAuthenticationMiddleware',
-	'bikeshare.middleware.MaintenanceInterceptorMiddleware',
+	'app.middleware.MaintenanceInterceptorMiddleware',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -66,6 +67,7 @@ TEMPLATES = [
 				'django.template.context_processors.debug',
 				'django.template.context_processors.request',
 				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages'
 			],
 		},
 	},
@@ -83,6 +85,9 @@ CONSTANCE_CONFIG = OrderedDict([
 	('CHECKOUT_DISALLOWED_MESSAGE', ('Bikeshare checkout has been closed until Spring. Check back later!',
 		'Message to display when checkout is disabled and user attempts checkout'
 	)),
+
+	('RENTAL_LENGTH', (datetime.timedelta(hours=24), 'How long before a user is prompted to return a bike')),
+
 	('MAINTENANCE_MODE', (False, 'Set to True to disable system')),
 	('MAINTENANCE_MESSAGE', ('Bikeshare is currently unavailable. Please try again later.',
 		'Message to display when a user accesses the app in mainenance mode'
@@ -181,3 +186,39 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/api/static/'
+
+def enable_admin():
+	""" Monkeypatches settings to allow for admin support """
+
+	#Patch installed apps
+	global INSTALLED_APPS
+
+	INSTALLED_APPS += [
+		'django.contrib.admin',
+		'django.contrib.sessions',
+		'django.contrib.messages',
+	]
+
+	global MIDDLEWARE
+
+	try:
+		secIndex = MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')
+		# insert after security
+		NEW_MIDDLEWARE = MIDDLEWARE[:secIndex] + [
+			'django.contrib.sessions.middleware.SessionMiddleware',
+			'django.middleware.csrf.CsrfViewMiddleware',
+			'django.contrib.auth.middleware.AuthenticationMiddleware',
+			'django.contrib.messages.middleware.MessageMiddleware',
+			'django.middleware.clickjacking.XFrameOptionsMiddleware',
+		] + MIDDLEWARE[secIndex:]
+	except ValueError:
+		NEW_MIDDLEWARE = [
+			'django.contrib.sessions.middleware.SessionMiddleware',
+			'django.middleware.csrf.CsrfViewMiddleware',
+			'django.contrib.auth.middleware.AuthenticationMiddleware',
+			'django.contrib.messages.middleware.MessageMiddleware',
+			'django.middleware.clickjacking.XFrameOptionsMiddleware',
+		] + MIDDLEWARE
+
+	MIDDLEWARE.clear()
+	MIDDLEWARE.extend(NEW_MIDDLEWARE)

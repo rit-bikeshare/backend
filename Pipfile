@@ -13,7 +13,6 @@ python_version = "3.5"
 [packages]
 
 django = "*"
-"django-modeladmin-reorder" = "*"
 djangorestframework = "*"
 "django-constance" = {extras = ["database"]}
 "djangorestframework-camel-case" = "*"

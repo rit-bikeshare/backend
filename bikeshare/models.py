@@ -72,7 +72,7 @@ class Bike(models.Model):
 class Rental(models.Model):
 	renter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, help_text='User who rented the bike')
 	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was rented rented')
-	rented_at = models.DateTimeField(help_text='When the rental began', auto_now_add=True)
+	rented_at = models.DateTimeField(help_text='When the rental began', default=timezone.now)
 	returned_at = models.DateTimeField(null=True, blank=True, help_text='When the bike was actually returned', db_index=True)
 
 	def is_complete(self):

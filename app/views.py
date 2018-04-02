@@ -1,7 +1,9 @@
-from django_shib_auth.core import ShibAuthCore
+from django_shib_auth.core import ShibAuthCore, ShibSessionAuthCore
 from rest_framework_jwt.settings import api_settings
 
 from django.shortcuts import redirect
+from django.views import View
+from django.urls import reverse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -36,3 +38,14 @@ class JwtLoginView(ShibAuthCore, APIView):
 		return Response({
 			'token': token
 		})
+
+class AdminLogin(ShibSessionAuthCore, View):
+	"""
+	Defines a view that persists Shib user data in the session
+	and redirects to admin home.
+	"""
+	def get(self, request):
+		print(request.user)
+		self.login(request)
+
+		return redirect(reverse('admin:index'))

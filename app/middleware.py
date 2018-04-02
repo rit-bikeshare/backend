@@ -1,6 +1,8 @@
 from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.models import AnonymousUser
 
+from constance import config
+
 from rest_framework.request import Request
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
@@ -16,6 +18,7 @@ def get_user_jwt(request):
 
 	Returns: instance of user object or AnonymousUser object
 	"""
+
 	user = None
 	try:
 		user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
@@ -34,5 +37,31 @@ class JWTAuthenticationMiddleware(object):
 		self.get_response = get_response
 	
 	def __call__(self, request):
-		request.user = SimpleLazyObject(lambda: get_user_jwt(request))
+		if getattr(request, 'user', AnonymousUser()).is_anonymous:
+			request.user = SimpleLazyObject(lambda: get_user_jwt(request))
 		return self.get_response(request)
+
+from django.http import JsonResponse
+from rest_framework import status
+
+class MaintenanceInterceptorMiddleware():
+	def __init__(self, get_response):
+		self.get_response = get_response
+	#enddef
+
+	def __call__(self, request):
+		return self.get_response(request)
+	#enddef
+
+	def process_view(self, request, view_func, view_args, view_kwargs):
+		if not config.MAINTENANCE_MODE:
+			return None
+		if getattr(view_func, 'disable_maintenance_check', False):
+			return None
+		if request.user.is_staff:
+			return None # staff can access
+
+		resp = {'detail': config.MAINTENANCE_MESSAGE}
+
+		return JsonResponse(resp, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+#endclass

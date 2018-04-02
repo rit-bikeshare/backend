@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.conf import settings
 from django.urls import path, include
-from django.contrib.gis import admin
+
+from . import views
 
 # This should be changed if shib is used
 USE_SHIB = getattr(settings, 'USE_SHIB', True)
@@ -24,7 +25,6 @@ urlpatterns = [
 ]
 
 if USE_SHIB:
-	from . import views
 	urlpatterns += [
 		path('login/', views.JwtLoginView.as_view()),
 		path('logout/', views.JwtLogoutView.as_view()),
@@ -34,5 +34,17 @@ else:
 	from django.http import HttpResponse
 	urlpatterns += [
 		path('login/', obtain_jwt_token),
-        path('logout/', lambda r: HttpResponse("{'success': true}")),
+		path('logout/', lambda r: HttpResponse("{'success': true}")),
+	]
+
+if getattr(settings, 'USE_ADMIN', False):
+	# Patch the admin urls and add them
+	from django.contrib.gis import admin
+	admin_patterns = [
+		path('login/', views.AdminLogin.as_view()),
+		path('', admin.site.urls)
+	]
+
+	urlpatterns += [
+		path('db-admin/', include(admin_patterns))
 	]
