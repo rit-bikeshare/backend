@@ -19,9 +19,13 @@ class Useful404Mixin():
 	Mixin to provide more useful 404 errors. rest framework
 	subs in a very generic error message if it catches a 404
 	"""
+
+	def __init__(self, * args, ** kwargs):
+		super().__init__(*args, **kwargs)
 	
-	def as_view(self, * args, ** kwargs):
-		view_func = super().as_view( * args, ** kwargs)
+	@classmethod
+	def as_view(cls, ** kwargs):
+		view_func = super().as_view(** kwargs)
 		
 		@wraps(view_func)
 		def exception_translator(*f_args, **f_kwargs):
@@ -45,8 +49,9 @@ class StatusView(APIView):
 			'ENABLE_DROP_ANYWHERE'
 		)
 
-	def as_view(self, * args, ** kwargs):
-		view = super().as_view(*args, ** kwargs)
+	@classmethod
+	def as_view(cls, ** kwargs):
+		view = super().as_view(** kwargs)
 		view.disable_maintenance_check = True
 		return view
 
@@ -62,6 +67,7 @@ class UserInfoView(APIView):
 
 class CheckoutView(APIView):
 	permission_classes = (permissions.IsAuthenticated, permissions.CanRentBike)
+	dry_run = None # Otherwise as_view complains
 
 	class DryRunSucceeded(Exception):
 		pass
