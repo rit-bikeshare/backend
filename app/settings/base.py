@@ -42,15 +42,29 @@ INSTALLED_APPS = [
 
 	'constance', # DB-backed settings
 	'constance.backends.database',
-
 	
 	'rest_framework',
 	'rest_framework_gis',
+
+	# Following is needed for Django admin site
+	'django.contrib.admin',
+	'django.contrib.sessions',
+	'django.contrib.messages',
 ]
 
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
 	'django.middleware.common.CommonMiddleware',
+
+	# Following section is needed for Django admin site.
+	# Comment it out if you're not using it
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+	# always need these
 	'app.middleware.JWTAuthenticationMiddleware',
 	'app.middleware.MaintenanceInterceptorMiddleware',
 ]
@@ -186,39 +200,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/api/static/'
-
-def enable_admin():
-	""" Monkeypatches settings to allow for admin support """
-
-	#Patch installed apps
-	global INSTALLED_APPS
-
-	INSTALLED_APPS += [
-		'django.contrib.admin',
-		'django.contrib.sessions',
-		'django.contrib.messages',
-	]
-
-	global MIDDLEWARE
-
-	try:
-		secIndex = MIDDLEWARE.index('django.middleware.security.SecurityMiddleware')
-		# insert after security
-		NEW_MIDDLEWARE = MIDDLEWARE[:secIndex] + [
-			'django.contrib.sessions.middleware.SessionMiddleware',
-			'django.middleware.csrf.CsrfViewMiddleware',
-			'django.contrib.auth.middleware.AuthenticationMiddleware',
-			'django.contrib.messages.middleware.MessageMiddleware',
-			'django.middleware.clickjacking.XFrameOptionsMiddleware',
-		] + MIDDLEWARE[secIndex:]
-	except ValueError:
-		NEW_MIDDLEWARE = [
-			'django.contrib.sessions.middleware.SessionMiddleware',
-			'django.middleware.csrf.CsrfViewMiddleware',
-			'django.contrib.auth.middleware.AuthenticationMiddleware',
-			'django.contrib.messages.middleware.MessageMiddleware',
-			'django.middleware.clickjacking.XFrameOptionsMiddleware',
-		] + MIDDLEWARE
-
-	MIDDLEWARE.clear()
-	MIDDLEWARE.extend(NEW_MIDDLEWARE)

@@ -15,4 +15,3 @@ from datetime import timedelta
 JWT_AUTH['JWT_EXPIRATION_DELTA'] = timedelta(days=365)
 
 USE_ADMIN = True
-enable_admin()
