@@ -117,7 +117,7 @@ class CheckoutView(APIView):
 			bike.current_rental = rental
 			bike.save()
 
-			if dry_run:
+			if self.dry_run:
 				raise CheckoutView.DryRunSucceeded()
 		#end transaction
 
