@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from rest_framework.views import APIView as __APIView
-from rest_framework import status, generics
+from rest_framework import status, generics, pagination
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
@@ -188,3 +188,16 @@ class ReportDamage(APIView):
 
 		return Response(serializers.DamageReportSerializer(damage_report).data)
 #end report_damage
+
+class UserRentalHistory(generics.ListAPIView):
+	class Paginator(pagination.PageNumberPagination):
+		page_size = 100
+
+	permission_classes = (permissions.IsAuthenticated,)
+	pagination_class = Paginator
+	serializer_class = serializers.RentalSerializer
+
+	def get_queryset(self):
+		return models.Rental.objects.filter(
+			renter = self.request.user
+		).order_by('-rented_at')

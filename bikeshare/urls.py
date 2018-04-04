@@ -14,7 +14,8 @@ userRouter = routers.SimpleRouter()
 userRouter.register('rentals', viewsets.UserRentalsViewSet, base_name='user_rentals')
 
 userUrls = [
-	path('info/', views.UserInfoView.as_view())
+	path('info/', views.UserInfoView.as_view()),
+	path('history/', views.UserRentalHistory.as_view())
 ]
 userUrls += userRouter.urls
 
