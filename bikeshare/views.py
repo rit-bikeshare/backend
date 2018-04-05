@@ -158,6 +158,7 @@ class CheckInView(APIView):
 			rental.save()
 
 			# clear the rental and update coords
+			bike.previous_rental = rental
 			bike.current_rental = None
 			bike.location = location
 			bike.save()
@@ -190,11 +191,10 @@ class ReportDamage(APIView):
 #end report_damage
 
 class UserRentalHistory(generics.ListAPIView):
-	class Paginator(pagination.PageNumberPagination):
+	class Pagination(pagination.PageNumberPagination):
 		page_size = 100
-
 	permission_classes = (permissions.IsAuthenticated,)
-	pagination_class = Paginator
+	pagination_class = Pagination
 	serializer_class = serializers.RentalSerializer
 
 	def get_queryset(self):

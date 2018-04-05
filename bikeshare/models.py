@@ -32,6 +32,7 @@ class Bike(models.Model):
 	visible = models.BooleanField(default=True, help_text='Determines if this bike is rentable. Use this instead of deleting bikes')
 	location = models.PointField(help_text='Location of the bike')
 	current_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The current rental for this bike', related_name='current_rental')
+	previous_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The previous rental for this bike', related_name='previous_rental')
 	lock = models.ForeignKey(BikeLock, on_delete=models.PROTECT, blank=True, default=None, null=True, help_text='Lock for the bike')
 
 	class Meta:
@@ -72,8 +73,8 @@ class Bike(models.Model):
 class Rental(models.Model):
 	renter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, help_text='User who rented the bike')
 	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was rented rented')
-	rented_at = models.DateTimeField(help_text='When the rental began', default=timezone.now)
-	returned_at = models.DateTimeField(null=True, blank=True, help_text='When the bike was actually returned', db_index=True)
+	rented_at = models.DateTimeField(help_text='When the rental began', default=timezone.now, db_index=True)
+	returned_at = models.DateTimeField(null=True, blank=True, help_text='When the bike was actually returned')
 
 	def is_complete(self):
 		return self.returned_at is not None

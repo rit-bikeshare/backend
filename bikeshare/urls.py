@@ -9,6 +9,8 @@ router.register('bikes', viewsets.BikeViewSet)
 router.register('groups', viewsets.GroupsViewSet)
 router.register('users', viewsets.UsersViewSet)
 router.register('locks', viewsets.BikeLockViewSet)
+router.register('rentals', viewsets.RentalsViewSet)
+router.register('active-rentals', viewsets.ActiveRentalsViewSet)
 
 userRouter = routers.SimpleRouter()
 userRouter.register('rentals', viewsets.UserRentalsViewSet, base_name='user_rentals')

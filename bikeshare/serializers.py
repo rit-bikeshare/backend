@@ -72,6 +72,11 @@ class RentalSerializer(serializers.ModelSerializer):
 		model = models.Rental
 		fields = '__all__'
 
+class UserRentalSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.Rental
+		fields = ('renter', 'bike', 'rented_at')
+
 class DamageReportSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.DamageReport
