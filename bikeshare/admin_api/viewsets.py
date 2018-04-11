@@ -2,9 +2,10 @@
 Standardized views provided by rest framework.
 """
 
-from . import serializers, models
+from bikeshare import models
+from . import serializers
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets, permissions, mixins, pagination
 
@@ -22,22 +23,22 @@ class RestrictedViewDjangoModelPermissions(permissions.DjangoModelPermissions):
 class DamageTypeViewSet(viewsets.ModelViewSet):
 	queryset = models.DamageType.objects.all()
 	serializer_class = serializers.DamageTypeSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
 
 class BikeRackViewSet(viewsets.ModelViewSet):
 	queryset = models.BikeRack.objects.all()
 	serializer_class = serializers.BikeRackSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
 
 class BikeLockViewSet(viewsets.ModelViewSet):
 	queryset = models.BikeLock.objects.all()
 	serializer_class = serializers.BikeLockSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
 
 class BikeViewSet(viewsets.ModelViewSet):
 	queryset = models.Bike.objects.all()
 	serializer_class = serializers.BikeSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
 
 class ActiveRentalsViewSet(viewsets.ModelViewSet):
 	queryset = models.Rental.objects.filter(returned_at=None)
@@ -55,19 +56,15 @@ class RentalsViewSet(viewsets.ModelViewSet):
 
 	pagination_class = Pagination
 
-class UserRentalsViewSet(viewsets.ReadOnlyModelViewSet):
-	serializer_class = serializers.UserRentalSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)
-
-	def get_queryset(self):
-		return models.Rental.objects.filter(
-			renter=self.request.user,
-			returned_at=None
-		)
-
-class GroupsViewSet(viewsets.ReadOnlyModelViewSet):
+class GroupViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.GroupSerializer
 	queryset = Group.objects.all()
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
+	
+class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
+	serializer_class = serializers.PermissionSerializer
+	queryset = Permission.objects.all()
+	permission_classes = (RestrictedViewDjangoModelPermissions,)	
 
 class UsersViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.UsersSerializer
