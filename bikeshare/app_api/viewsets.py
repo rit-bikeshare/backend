@@ -30,19 +30,7 @@ class BikeViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = (permissions.DjangoModelPermissions,)
 
 	def get_queryset(self):
-		query = models.Bike.objects.filter(current_rental=None)
-
-		if not self.request.user.has_perm('bikeshare.rent_hidden_bike'):
-			query = query.filter(visible=True)
-
-		damaged_bikes = models.DamageReport.objects.filter(
-			resolved_by=None,
-			critical=True
-		).values('id')
-
-		query = query.exclude(id__in=damaged_bikes)
-
-		return query
+		return models.Bike.rentable_bikes(self.request.user)
 
 
 class UserRentalsViewSet(viewsets.ReadOnlyModelViewSet):

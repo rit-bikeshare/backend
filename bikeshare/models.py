@@ -48,6 +48,26 @@ class Bike(models.Model):
 		return str(self.id)
 	#enddef
 
+	@classmethod
+	def rentable_bikes(klass, user, query=None):
+		if query is None:
+			query = klass.objects.all()
+
+		query = query.filter(current_rental=None)
+
+		if not user.has_perm('bikeshare.rent_hidden_bike'):
+			query = query.filter(visible=True)
+
+		damaged_bikes = DamageReport.objects.filter(
+			resolved_by=None,
+			critical=True
+		).values_list('bike', flat=True)
+
+		query = query.exclude(id__in=damaged_bikes)
+
+		return query
+
+
 class Rental(models.Model):
 	renter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, help_text='User who rented the bike')
 	bike = models.ForeignKey(Bike, on_delete=models.CASCADE, help_text='The bike that was rented rented')
