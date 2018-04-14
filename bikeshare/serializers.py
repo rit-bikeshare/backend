@@ -12,7 +12,7 @@ class BikeRackSerializerBase(serializers.ModelSerializer):
 
 	class Meta:
 		model = models.BikeRack
-		fields = ('bike_count','lat', 'lon', 'id')
+		fields = ('bike_count','lat', 'lon', 'id', 'name', 'description', 'check_in_area')
 
 	def get_bike_count(self, obj):
 		user = self.context['request'].user
