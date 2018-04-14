@@ -15,6 +15,7 @@ urlpatterns = [
 	path('checkin/', views.CheckInView.as_view()),
 	path('check-in/', views.CheckInView.as_view()),
 	path('report-damage/', views.ReportDamage.as_view()),
+	path('rentals/', views.RentalHistory.as_view())
 ]
 
 urlpatterns += router.urls
