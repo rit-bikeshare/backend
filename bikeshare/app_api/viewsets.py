@@ -32,17 +32,6 @@ class BikeViewSet(viewsets.ReadOnlyModelViewSet):
 	def get_queryset(self):
 		return models.Bike.rentable_bikes(self.request.user)
 
-
-class UserRentalsViewSet(viewsets.ReadOnlyModelViewSet):
-	serializer_class = serializers.UserRentalSerializer
-	permission_classes = (permissions.DjangoModelPermissions,)
-
-	def get_queryset(self):
-		return models.Rental.objects.filter(
-			renter=self.request.user,
-			returned_at=None
-		)
-
 class GroupsViewSet(viewsets.ReadOnlyModelViewSet):
 	serializer_class = serializers.GroupSerializer
 	queryset = Group.objects.all()

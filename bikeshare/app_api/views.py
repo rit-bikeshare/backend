@@ -139,6 +139,15 @@ class ReportDamage(APIView):
 		return Response(serializers.DamageReportSerializer(damage_report).data)
 #end report_damage
 
+class CurrentRentals(generics.ListAPIView):
+	serializer_class = serializers.RentalSerializer
+
+	def get_queryset(self):
+		return models.Rental.objects.filter(
+			renter = self.request.user,
+			returned_at=None
+		)
+
 class RentalHistory(generics.ListAPIView):
 	class Pagination(pagination.PageNumberPagination):
 		page_size = 100

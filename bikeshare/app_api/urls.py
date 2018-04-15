@@ -7,7 +7,6 @@ router.register('damage-types', viewsets.DamageTypeViewSet)
 router.register('bike-racks', viewsets.BikeRackViewSet)
 router.register('bikes', viewsets.BikeViewSet)
 router.register('locks', viewsets.BikeLockViewSet)
-router.register('history', viewsets.UserRentalsViewSet, base_name='history')
 
 urlpatterns = [
 	path('can-checkout/', views.CheckoutView.as_view(dry_run=True)),
@@ -15,7 +14,8 @@ urlpatterns = [
 	path('checkin/', views.CheckInView.as_view()),
 	path('check-in/', views.CheckInView.as_view()),
 	path('report-damage/', views.ReportDamage.as_view()),
-	path('rentals/', views.RentalHistory.as_view())
+	path('history/', views.RentalHistory.as_view()),
+	path('rentals/', views.CurrentRentals.as_view()),
 ]
 
 urlpatterns += router.urls
