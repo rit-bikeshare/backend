@@ -6,7 +6,6 @@ router = routers.SimpleRouter()
 router.register('damage-types', viewsets.DamageTypeViewSet)
 router.register('bike-racks', viewsets.BikeRackViewSet)
 router.register('bikes', viewsets.BikeViewSet)
-router.register('locks', viewsets.BikeLockViewSet)
 
 urlpatterns = [
 	path('can-checkout/', views.CheckoutView.as_view(dry_run=True)),

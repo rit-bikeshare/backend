@@ -6,21 +6,22 @@ from bikeshare.serializers import BikeRackSerializerBase, BikeSerializerBase
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 
+from constance import config
+
 class BikeRackSerializer(BikeRackSerializerBase):
 	pass
-
-class BikeLockSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = models.BikeLock
-		fields = '__all__'
 
 class BikeSerializer(BikeSerializerBase):
 	pass
 		
 class RentalSerializer(serializers.ModelSerializer):
+	should_return_at = serializers.SerializerMethodField()
 	class Meta:
 		model = models.Rental
-		fields = '__all__'
+		fields = ('renter', 'bike', 'returned_at', 'rented_at', 'should_return_at')
+
+	def get_should_return_at(self, obj):
+		return obj.rented_at + config.RENTAL_LENGTH
 
 class DamageReportSerializer(serializers.ModelSerializer):
 	class Meta:
