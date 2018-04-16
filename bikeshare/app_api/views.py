@@ -3,6 +3,8 @@ from functools import wraps
 from bikeshare.views import APIView
 from bikeshare import models
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from constance import config
 from django.db import transaction
 from django.db.models import Case, When, F
@@ -159,3 +161,29 @@ class RentalHistory(generics.ListAPIView):
 		return models.Rental.objects.filter(
 			renter = self.request.user
 		).order_by('-rented_at')
+
+class LockControlView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+
+	def post(self, request):
+		serializer = serializers.LockControlSerializer(data=request.data)
+		if not serializer.is_valid():
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+		bike = get_object_or_404(models.Bike, id=serializer.validated_data['bike'])
+		if not bike.current_rental or bike.current_rental.renter != request.user:
+			raise exceptions.NotYourRentalException()
+
+		channel_layer = get_channel_layer()
+
+		command = serializer.validated_data['command']
+
+		payload = {
+			"type": 'lock.control',
+			"command": command
+		}
+
+		async_to_sync(channel_layer.send)(bike.lock.channel_name, payload)
+
+		return Response()
+		

@@ -65,6 +65,10 @@ class ReportDamageRequestSerializer(serializers.Serializer):
 	comments = serializers.CharField()
 	critical = serializers.BooleanField()
 
+class LockControlSerializer(serializers.Serializer):
+	bike = serializers.SlugField()
+	command = serializers.ChoiceField(['lock', 'unlock'])
+
 class GroupSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Group

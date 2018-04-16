@@ -1,0 +1,41 @@
+from django.shortcuts import get_object_or_404
+
+import json
+from asgiref.sync import async_to_sync
+from bikeshare import models
+from channels.generic.websocket import WebsocketConsumer
+
+class LockConsumer(WebsocketConsumer):
+	def connect(self):
+		self.lock_id = self.scope["url_route"]["kwargs"]["id"]
+
+		lock = get_object_or_404(models.BikeLock, id=self.lock_id)
+		lock.channel_name = self.channel_name
+		lock.save()
+
+		self.accept()
+	
+	def receive(self, text_data=None, bytes_data=None):
+		msg = json.loads(text_data)
+		rental_id = models.BikeLock.objects.get(id=self.lock_id).bike.current_rental_id
+
+		if rental_id:
+			async_to_sync(self.channel_layer.group_send)('rental_' + str(rental_id), {
+				'type': 'lock.state',
+				'state': msg['state']
+			})
+
+	def lock_control(self, event):
+		self.send('{{"command": "{}"}}'.format(event['command']))
+
+class RentalLockState(WebsocketConsumer):
+	def connect(self):
+		self.rental_id = self.scope["url_route"]["kwargs"]["id"]
+		self.accept()
+		async_to_sync(self.channel_layer.group_add)("rental_" + str(self.rental_id), self.channel_name)
+
+	def disconnect(self, close_code):
+		async_to_sync(self.channel_layer.group_discard)("rental_" + str(self.rental_id), self.channel_name)
+	
+	def lock_state(self, event):
+		self.send('{{"state": "{}"}}'.format(event['state']))

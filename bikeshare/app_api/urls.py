@@ -15,6 +15,7 @@ urlpatterns = [
 	path('report-damage/', views.ReportDamage.as_view()),
 	path('history/', views.RentalHistory.as_view()),
 	path('rentals/', views.CurrentRentals.as_view()),
+	path('lock/', views.LockControlView.as_view())
 ]
 
 urlpatterns += router.urls

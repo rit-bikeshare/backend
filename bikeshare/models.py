@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils import timezone
 from datetime import timedelta
-from macaddress.fields import MACAddressField
 
 from constance import config
 
@@ -18,6 +17,7 @@ class BikeRack(models.Model):
 	#enddef
 
 class BikeLock(models.Model):
+	channel_name = models.SlugField(db_index=True)
 	def __str__(self):
 		return str(self.id)
 
@@ -31,7 +31,7 @@ class Bike(models.Model):
 	location = models.PointField(help_text='Location of the bike')
 	current_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The current rental for this bike', related_name='current_rental')
 	previous_rental = models.ForeignKey('Rental', on_delete=models.SET_NULL, blank=True, default=None, null=True, help_text='The previous rental for this bike', related_name='previous_rental')
-	lock = models.ForeignKey(BikeLock, on_delete=models.PROTECT, blank=True, default=None, null=True, help_text='Lock for the bike')
+	lock = models.OneToOneField(BikeLock, on_delete=models.PROTECT, blank=True, default=None, null=True, help_text='Lock for the bike', related_name='bike')
 
 	class Meta:
 		permissions = (

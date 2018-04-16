@@ -32,6 +32,7 @@ CSRF_COOKIE_AGE = None
 # Application definition
 
 INSTALLED_APPS = [
+	'channels',
 	'app',
 	'bikeshare',
 
@@ -88,7 +89,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'wsgi.application'
+ASGI_APPLICATION = 'asgi.application'
 
+CHANNEL_LAYERS = {
+	"default": {
+		"BACKEND": "channels.layers.InMemoryChannelLayer",
+	},
+}
 
 # Setting editable through admin interface
 from collections import OrderedDict
