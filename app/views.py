@@ -34,6 +34,12 @@ class JwtLoginView(ShibAuthCore, APIView):
 
 		if request.GET.get('expo', 'false') == 'true':
 			return redirect('https://auth.expo.io/@bikeshare/bikeshare?token=' + urllib.parse.quote_plus(token))
+		if request.GET.get('admin-local', 'false') == 'true':
+			return redirect('http://local.bikesharedev.rit.edu/admin/auth/success?token=' + urllib.parse.quote_plus(token))
+		if request.GET.get('admin-qa', 'false') == 'true':
+			return redirect('http://bikesharedev.rit.edu/admin/auth/success?token=' + urllib.parse.quote_plus(token))
+		if request.GET.get('admin', 'false') == 'true':
+			return redirect('/admin/auth/success?token=' + urllib.parse.quote_plus(token))
 		
 		return Response({
 			'token': token
