@@ -58,4 +58,4 @@ class BikeSerializerBase(serializers.ModelSerializer):
 class UserInfoSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = get_user_model()
-		fields = ('last_login', 'username', 'first_name', 'last_name', 'groups')
+		fields = ('last_login', 'username', 'first_name', 'last_name', 'groups', 'is_staff')
