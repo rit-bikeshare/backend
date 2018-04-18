@@ -74,7 +74,7 @@ class BikeAdmin(DynamicStartMixin, admin.OSMGeoAdmin):
 			'fields': ('visible', 'location', 'lock') 
 		}),
 		('Advanced', {
-			'fields': ('id', 'current_rental')
+			'fields': ('id', 'current_rental', 'previous_rental')
 		})
 	)
 

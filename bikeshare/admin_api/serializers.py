@@ -17,9 +17,22 @@ class BikeLockSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class BikeSerializer(BikeSerializerBase):
+	current_renter_username = serializers.SerializerMethodField()
+	previous_renter_username = serializers.SerializerMethodField()
+
 	class Meta:
 		model = models.Bike
 		exclude = ('location',)
+
+	def get_current_renter_username(self, obj):
+		if not obj.current_rental:
+			return None
+		return obj.current_rental.renter.username
+
+	def get_previous_renter_username(self, obj):
+		if not obj.previous_rental:
+			return None
+		return obj.previous_rental.renter.username
 
 class RentalSerializer(serializers.ModelSerializer):
 	class Meta:
