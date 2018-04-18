@@ -39,7 +39,7 @@ class DamageTypeSerializer(serializers.ModelSerializer):
 class UsersSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = get_user_model()
-		exclude = ('password','email','is_superuser', 'is_staff')
+		exclude = ('password','email','is_superuser')
 
 class GroupSerializer(serializers.ModelSerializer):
 	class Meta:
