@@ -18,7 +18,7 @@ class RentalSerializer(serializers.ModelSerializer):
 	should_return_at = serializers.SerializerMethodField()
 	class Meta:
 		model = models.Rental
-		fields = ('renter', 'bike', 'returned_at', 'rented_at', 'should_return_at')
+		fields = ('id', 'renter', 'bike', 'returned_at', 'rented_at', 'should_return_at')
 
 	def get_should_return_at(self, obj):
 		return obj.rented_at + config.RENTAL_LENGTH
@@ -77,4 +77,4 @@ class GroupSerializer(serializers.ModelSerializer):
 class UserRentalSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Rental
-		fields = ('renter', 'bike', 'rented_at')
+		fields = ('id', 'renter', 'bike', 'rented_at')
