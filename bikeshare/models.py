@@ -17,7 +17,7 @@ class BikeRack(models.Model):
 	#enddef
 
 class BikeLock(models.Model):
-	channel_name = models.SlugField(db_index=True, blank=True, unique=True, editable=False)
+	channel_name = models.SlugField(db_index=True, blank=True, editable=False)
 	def __str__(self):
 		return str(self.id)
 
