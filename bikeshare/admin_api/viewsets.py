@@ -25,6 +25,19 @@ class DamageTypeViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.DamageTypeSerializer
 	permission_classes = (RestrictedViewDjangoModelPermissions,)
 
+class DamageReportViewSet(viewsets.ModelViewSet):
+	queryset = models.DamageReport.objects.all()
+	serializer_class = serializers.DamageReportSerializer
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
+	filter_fields = ('acknowledged', 'bike', 'critical', 'resolved_by')
+
+
+class MaintenanceReportViewSet(viewsets.ModelViewSet):
+	queryset = models.MaintenanceReport.objects.all()
+	serializer_class = serializers.MaintenanceReportSerializer
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
+	filter_fields = ('bike',)	
+
 class BikeRackViewSet(viewsets.ModelViewSet):
 	queryset = models.BikeRack.objects.all()
 	serializer_class = serializers.BikeRackSerializer

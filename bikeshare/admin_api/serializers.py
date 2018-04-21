@@ -49,6 +49,11 @@ class DamageTypeSerializer(serializers.ModelSerializer):
 		model = models.DamageType
 		fields = '__all__'
 
+class MaintenanceReportSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.MaintenanceReport
+		fields = '__all__'
+
 class UsersSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = get_user_model()

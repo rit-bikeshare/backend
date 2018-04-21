@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets, permissions, mixins, pagination
 
 class DamageTypeViewSet(viewsets.ReadOnlyModelViewSet):
-	queryset = models.DamageType.objects.all()
+	queryset = models.DamageType.objects.filter(rider_selectable=True)
 	serializer_class = serializers.DamageTypeSerializer
 	permission_classes = (permissions.DjangoModelPermissions,)
 

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 	'constance', # DB-backed settings
 	'constance.backends.database',
 	
+	'django_filters',
 	'rest_framework',
 	'rest_framework_gis',
 
@@ -150,6 +151,8 @@ REST_FRAMEWORK = {
 	'DEFAULT_PARSER_CLASSES': [
 		'djangorestframework_camel_case.parser.CamelCaseJSONParser',
 	],
+
+	'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
 from datetime import timedelta

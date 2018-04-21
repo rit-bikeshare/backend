@@ -137,7 +137,7 @@ class DamageTypeAdmin(admin.ModelAdmin):
 	prepopulated_fields = {"id": ("name",)}
 	fieldsets = (
 		('General', {
-			'fields': ('name', 'description', 'force_critical') 
+			'fields': ('name', 'description', 'force_critical', 'rider_selectable') 
 		}),
 		('Advanced', {
 			'fields': ('id',)

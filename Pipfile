@@ -14,14 +14,16 @@ python_version = "3.5"
 
 django = "*"
 djangorestframework = "*"
-"django-constance" = {extras = ["database"]}
-"djangorestframework-camel-case" = "*"
-"djangorestframework-gis" = "*"
-"django-shib-auth" = {git = "https://github.com/ritstudentgovernment/django-shib-auth.git"}
-"djangorestframework-jwt" = "*"
+django-constance = {extras = ["database"]}
+djangorestframework-camel-case = "*"
+djangorestframework-gis = "*"
+django-shib-auth = {git = "https://github.com/ritstudentgovernment/django-shib-auth.git"}
+djangorestframework-jwt = "*"
 channels = "*"
-"channels-redis" = "*"
+channels-redis = "*"
 redis = "*"
+django-filter = "*"
 
 
 [dev-packages]
+

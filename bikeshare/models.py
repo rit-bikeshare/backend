@@ -17,7 +17,7 @@ class BikeRack(models.Model):
 	#enddef
 
 class BikeLock(models.Model):
-	channel_name = models.SlugField(db_index=True)
+	channel_name = models.SlugField(db_index=True, blank=True, unique=True, editable=False)
 	def __str__(self):
 		return str(self.id)
 
@@ -60,7 +60,8 @@ class Bike(models.Model):
 
 		damaged_bikes = DamageReport.objects.filter(
 			resolved_by=None,
-			critical=True
+		).filter(
+			Q(critical=True) | Q(acknowledged=True)
 		).values_list('bike', flat=True)
 
 		query = query.exclude(id__in=damaged_bikes)
@@ -99,6 +100,7 @@ class DamageType(models.Model):
 	name = models.CharField(max_length=50, help_text='Friendly name of this damage, such as "Flat tire"')
 	description = models.CharField(max_length=255, help_text='Description of what this damage type means')
 	force_critical = models.BooleanField(help_text='Should this damage type always be critical?')
+	rider_selectable = models.BooleanField(db_index=True, help_text='Should this damage type be selectable by normal users')
 
 	def __str__(self):
 		return self.name
@@ -113,6 +115,7 @@ class DamageReport(models.Model):
 	critical = models.BooleanField(help_text='If this damage interferes with the operation of the bike. Selecting this makes the bike unavailable for rental.')
 	reported_at = models.DateTimeField(auto_now_add=True, help_text='When the damage was reported')
 	resolved_by = models.ForeignKey(MaintenanceReport, on_delete=models.CASCADE, blank=True, null=True, help_text='The maintenance report that resolved this damage')
+	acknowledged = models.BooleanField(default=False, help_text='If this report has been acknowledged')
 
 	class Meta:
 		permissions = (
