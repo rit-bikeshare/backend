@@ -1,5 +1,7 @@
 from rest_framework import routers
-from . import viewsets
+from . import viewsets, views
+from django.urls import path
+
 
 router = routers.SimpleRouter()
 router.register('damage-types', viewsets.DamageTypeViewSet)
@@ -15,3 +17,7 @@ router.register('damage-reports', viewsets.DamageReportViewSet)
 router.register('maintenance-reports', viewsets.MaintenanceReportViewSet)
 
 urlpatterns = router.urls
+urlpatterns += [
+	path('damaged-bikes/', views.DamagedBikes.as_view()),
+	path('stats/', views.Stats.as_view())
+]

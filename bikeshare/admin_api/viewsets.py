@@ -4,21 +4,11 @@ Standardized views provided by rest framework.
 
 from bikeshare import models
 from . import serializers
+from .permissions import RestrictedViewDjangoModelPermissions
 
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets, permissions, mixins, pagination
-
-class RestrictedViewDjangoModelPermissions(permissions.DjangoModelPermissions):
-	 perms_map = {
-		'GET': ['%(app_label)s.change_%(model_name)s'],
-		'OPTIONS': [],
-		'HEAD': ['%(app_label)s.change_%(model_name)s'],
-		'POST': ['%(app_label)s.add_%(model_name)s'],
-		'PUT': ['%(app_label)s.change_%(model_name)s'],
-		'PATCH': ['%(app_label)s.change_%(model_name)s'],
-		'DELETE': ['%(app_label)s.delete_%(model_name)s'],
-	}
+from rest_framework import viewsets, mixins, pagination
 
 class DamageTypeViewSet(viewsets.ModelViewSet):
 	queryset = models.DamageType.objects.all()

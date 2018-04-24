@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 
@@ -47,6 +48,17 @@ class Bike(models.Model):
 	def __str__(self):
 		return str(self.id)
 	#enddef
+
+	@classmethod
+	def damaged_bikes(klass, query=None):
+		if query is None:
+			query = klass.objects.all()
+
+		damaged_bikes = DamageReport.objects.filter(
+			resolved_by=None,
+		).values_list('bike', flat=True)
+
+		return query.filter(id__in=damaged_bikes)
 
 	@classmethod
 	def rentable_bikes(klass, user, query=None):
