@@ -1,19 +1,21 @@
 from bikeshare.views import APIView
 from bikeshare import models
 
-from rest_framework import status, generics, pagination
+from rest_framework import status, generics, pagination, permissions
 from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
 
-from . import serializers, permissions
+from . import serializers
+from .permissions import RestrictedViewDjangoModelPermissions
 
 class DamagedBikes(generics.ListAPIView):
 	queryset = models.Bike.damaged_bikes()
 	serializer_class = serializers.BikeSerializer
-	permission_classes = (permissions.RestrictedViewDjangoModelPermissions,)
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
 
 class Stats(APIView):
+	permission_classes = (permissions.IsAdminUser,)
 	def get(self, request):
 		stats = [
 			{'title': 'Active Rentals', 'value': models.Rental.objects.filter(returned_at=None).count()},
