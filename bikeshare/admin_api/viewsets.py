@@ -72,5 +72,6 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
 class UsersViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.UsersSerializer
 	queryset = get_user_model().objects.all()
-	permission_classes = (RestrictedViewDjangoModelPermissions,)	
+	permission_classes = (RestrictedViewDjangoModelPermissions,)
+	filter_fields = ('first_name', 'last_name')
 	
