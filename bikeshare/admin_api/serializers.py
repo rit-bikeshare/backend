@@ -68,3 +68,7 @@ class PermissionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Permission
 		exclude = ('content_type','codename')
+
+class LockControlSerializer(serializers.Serializer):
+	bike = serializers.SlugField()
+	command = serializers.ChoiceField(['lock', 'unlock'])

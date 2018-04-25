@@ -6,6 +6,10 @@ from rest_framework import status, generics, pagination, permissions
 from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 from . import serializers
 from .permissions import RestrictedViewDjangoModelPermissions
@@ -27,7 +31,10 @@ class Settings(APIView):
 				'value': getattr(config, name)
 			})
 		
-		return Response(cfg)
+		return Response({
+			'settings': cfg,
+			'fieldsets': settings.CONFIG_FIELDSETS
+		})
 
 	def post(self, request):
 		for k, v in request.data.items():
@@ -49,3 +56,29 @@ class Stats(APIView):
 		]
 
 		return Response(stats)
+
+class LockControlView(APIView):
+	permission_classes = (permissions.IsAdminUser,)
+
+	def post(self, request):
+		serializer = serializers.LockControlSerializer(data=request.data)
+		if not serializer.is_valid():
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+		bike = get_object_or_404(models.Bike, id=serializer.validated_data['bike'])
+
+		channel_layer = get_channel_layer()
+
+		command = serializer.validated_data['command']
+
+		payload = {
+			"type": 'lock.control',
+			"command": command
+		}
+
+		if not bike.lock or bike.lock.channel_name == '':
+			return Response({'error': 'Lock not properly configured.'}, status=500)
+
+		async_to_sync(channel_layer.send)(bike.lock.channel_name, payload)
+
+		return Response()

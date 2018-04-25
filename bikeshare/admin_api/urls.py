@@ -20,5 +20,6 @@ urlpatterns = router.urls
 urlpatterns += [
 	path('damaged-bikes/', views.DamagedBikes.as_view()),
 	path('stats/', views.Stats.as_view()),
-	path('settings/', views.Settings.as_view())
+	path('settings/', views.Settings.as_view()),
+	path('lock/', views.LockControlView.as_view())
 ]
