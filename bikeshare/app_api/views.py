@@ -185,5 +185,6 @@ class LockControlView(APIView):
 
 		async_to_sync(channel_layer.send)(bike.lock.channel_name, payload)
 
-		return Response()
+		return Response({'success': True})
+
 		
