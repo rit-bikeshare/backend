@@ -152,7 +152,7 @@ REST_FRAMEWORK = {
 		'djangorestframework_camel_case.parser.CamelCaseJSONParser',
 	],
 
-	'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+	'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend', 'rest_framework.filters.SearchFilter')
 }
 
 from datetime import timedelta
