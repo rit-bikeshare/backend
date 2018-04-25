@@ -9,6 +9,7 @@ from .permissions import RestrictedViewDjangoModelPermissions
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets, mixins, pagination
+from django_filters import rest_framework as filters
 
 class DamageTypeViewSet(viewsets.ModelViewSet):
 	queryset = models.DamageType.objects.all()
@@ -16,11 +17,17 @@ class DamageTypeViewSet(viewsets.ModelViewSet):
 	permission_classes = (RestrictedViewDjangoModelPermissions,)
 
 class DamageReportViewSet(viewsets.ModelViewSet):
+	class Filter(filters.FilterSet):
+		is_open = filters.BooleanFilter(name='resolved_by_id', lookup_expr='isnull')
+
+		class Meta:
+			model = models.DamageReport
+			fields = ('acknowledged', 'bike', 'critical', 'resolved_by', 'is_open')
+	
 	queryset = models.DamageReport.objects.all()
 	serializer_class = serializers.DamageReportSerializer
 	permission_classes = (RestrictedViewDjangoModelPermissions,)
-	filter_fields = ('acknowledged', 'bike', 'critical', 'resolved_by')
-
+	filter_class = Filter
 
 class MaintenanceReportViewSet(viewsets.ModelViewSet):
 	queryset = models.MaintenanceReport.objects.all()
