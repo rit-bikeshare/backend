@@ -19,5 +19,6 @@ router.register('maintenance-reports', viewsets.MaintenanceReportViewSet)
 urlpatterns = router.urls
 urlpatterns += [
 	path('damaged-bikes/', views.DamagedBikes.as_view()),
-	path('stats/', views.Stats.as_view())
+	path('stats/', views.Stats.as_view()),
+	path('settings/', views.Settings.as_view())
 ]
