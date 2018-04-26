@@ -127,7 +127,7 @@ class DamageReport(models.Model):
 	comments = models.TextField(help_text='Additional comments about the damage')
 	critical = models.BooleanField(help_text='If this damage interferes with the operation of the bike. Selecting this makes the bike unavailable for rental.')
 	reported_at = models.DateTimeField(auto_now_add=True, help_text='When the damage was reported')
-	resolved_by = models.ForeignKey(MaintenanceReport, on_delete=models.CASCADE, blank=True, null=True, help_text='The maintenance report that resolved this damage')
+	resolved_by = models.ForeignKey(MaintenanceReport, on_delete=models.CASCADE, blank=True, null=True, help_text='The maintenance report that resolved this damage', related_name='damage_reports')
 	acknowledged = models.BooleanField(default=False, help_text='If this report has been acknowledged')
 
 	class Meta:

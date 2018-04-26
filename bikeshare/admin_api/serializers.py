@@ -52,7 +52,7 @@ class DamageTypeSerializer(serializers.ModelSerializer):
 class MaintenanceReportSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.MaintenanceReport
-		fields = '__all__'
+		fields = ('bike', 'created_at', 'comments', 'damage_reports')
 
 class UsersSerializer(serializers.ModelSerializer):
 	class Meta:
