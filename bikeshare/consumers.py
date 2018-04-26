@@ -20,15 +20,18 @@ class LockConsumer(WebsocketConsumer):
 		bike = models.BikeLock.objects.get(id=self.lock_id).bike
 		rental_id = bike.current_rental_id
 
-		location = msg['state']['location']
+		print(msg)
+
+		location = msg.get('location', None)
 		if location:
 			bike.location = Point(location['lon'], location['lat'], srid=4326)
 			bike.save()
-		
-		if rental_id:
+
+		state = msg.get('state', None)
+		if state and rental_id:
 			async_to_sync(self.channel_layer.group_send)('rental_' + str(rental_id), {
 				'type': 'lock.state',
-				'state': msg['state']
+				'state': state
 			})
 
 	def lock_control(self, event):
