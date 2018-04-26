@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-
+from django.contrib.gis.geos import Point
 import json
 from asgiref.sync import async_to_sync
 from bikeshare import models
@@ -17,8 +17,14 @@ class LockConsumer(WebsocketConsumer):
 	
 	def receive(self, text_data=None, bytes_data=None):
 		msg = json.loads(text_data)
-		rental_id = models.BikeLock.objects.get(id=self.lock_id).bike.current_rental_id
+		bike = models.BikeLock.objects.get(id=self.lock_id).bike
+		rental_id = bike.current_rental_id
 
+		location = msg['state']['location']
+		if location:
+			bike.location = Point(location['lon'], location['lat'], srid=4326)
+			bike.save()
+		
 		if rental_id:
 			async_to_sync(self.channel_layer.group_send)('rental_' + str(rental_id), {
 				'type': 'lock.state',
